@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - SPMB SPS Tunas Melati</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+
+    <div class="bubble-container">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="admin-layout">
+        <aside class="sidebar glass-effect">
+            <div class="sidebar-brand">
+                <img src="assets/logo.png" alt="Logo" class="admin-logo" onerror="this.src='https://placehold.co/50x50/1cb5e8/ffffff?text=SPS'">
+                <div>
+                    <h2 class="brand-name">TUNAS MELATI</h2>
+                    <p class="brand-role">Administrator Panel</p>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active">📊 Dashboard Utama</a>
+                <a href="index.html" class="menu-item">📝 Buka Form Pendaftaran</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-theme-toggle" class="btn-theme">🌙 Mode Gelap</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar glass-effect">
+                <div class="topbar-left">
+                    <h1 class="page-title">Dashboard Pendaftaran Murid Baru</h1>
+                    <p class="page-subtitle">Tahun Ajaran 2026 / 2027</p>
+                </div>
+                <div class="topbar-right">
+                    <div class="admin-profile">
+                        <span class="avatar">👨‍💼</span>
+                        <span class="admin-name">Panitia PMB</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="stats-grid">
+                <div class="stat-card glass-effect blue-gradient">
+                    <div class="stat-icon">👶</div>
+                    <div class="stat-info">
+                        <h3 id="stat-total">0</h3>
+                        <p>Total Pendaftar</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-effect green-gradient">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 id="stat-diterima">0</h3>
+                        <p>Diterima</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-effect yellow-gradient">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-info">
+                        <h3 id="stat-proses">0</h3>
+                        <p>Dalam Proses</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-effect red-gradient">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-info">
+                        <h3 id="stat-ditolak">0</h3>
+                        <p>Ditolak</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="control-box glass-effect scroll-reveal">
+                <div class="filter-wrapper">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="search-bar" placeholder="Cari berdasarkan Nama, NIK anak, atau Orang Tua...">
+                    </div>
+                    <div class="select-filter-wrapper">
+                        <select id="filter-status">
+                            <option value="all">Semua Status</option>
+                            <option value="Proses">⏳ Dalam Proses</option>
+                            <option value="Diterima">✅ Diterima</option>
+                            <option value="Ditolak">❌ Ditolak</option>
+                        </select>
+                        <button id="btn-export-csv" class="btn btn-secondary">📥 Ekspor CSV (Excel)</button>
+                        <button id="btn-inject-mock" class="btn btn-primary-soft">✨ Tambah Data Simulasi</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="table-card glass-effect scroll-reveal">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Anak</th>
+                                <th>NIK / KK</th>
+                                <th>Nama Orang Tua</th>
+                                <th>No. HP / WA</th>
+                                <th>Status</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendaftar-list">
+                            </tbody>
+                    </table>
+                </div>
+                <div id="empty-state" class="empty-state">
+                    📭 Belum ada data pendaftaran yang masuk. Silakan isi form pendaftaran terlebih dahulu atau klik tombol "Tambah Data Simulasi".
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3>🔍 Detail Lengkap Calon Siswa</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalDetailContent">
+                </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnCloseModal">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-app.js"></script>
+</body>
+</html>
