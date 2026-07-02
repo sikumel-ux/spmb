@@ -1,16 +1,16 @@
 /* ==========================================================================
-   RESET & BASE STYLES (KOPITALIS DARK THEME)
+   RESET & BASE STYLES
    ========================================================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent; /* Hilangkan efek biru bawaan ios/android saat klik */
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    background-color: #1A1714; /* KOPITALIS Signature Color */
+    background-color: #1A1714;
     color: #E2E2E2;
     padding: 0;
     margin: 0;
@@ -26,8 +26,8 @@ body {
    FORM CONTAINER & ENGINE (CLEAN & FLAT - NO SHADOWS)
    ========================================================================== */
 .form-card {
-    background: transparent; /* No card wrapper look, menyatu dengan body */
-    border-bottom: 1px solid #2A2521; /* Divider tipis antar seksi */
+    background: transparent;
+    border-bottom: 1px solid #2A2521;
     padding: 24px 0;
     margin-bottom: 10px;
 }
@@ -60,16 +60,15 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* Base Responsive Grid (Desktop Default) */
+/* Base Grid Layout (Desktop) */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 20px 16px;
 }
 
-/* Grid Column Spans */
+/* Column Spans */
 .span-12 { grid-column: span 12; }
-.span-8  { grid-column: span 8; }
 .span-6  { grid-column: span 6; }
 .span-4  { grid-column: span 4; }
 .span-3  { grid-column: span 3; }
@@ -83,7 +82,7 @@ body {
     gap: 8px;
 }
 
-.form-group label, .section-sub-label {
+.form-group label {
     font-size: 13px;
     font-weight: 500;
     color: #A39E93;
@@ -110,84 +109,10 @@ input:focus, select:focus {
     background-color: #2A2521;
 }
 
-/* Hilangkan panah spinner bawaan input number */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
-
-/* ==========================================================================
-   CHECKBOX & PWA CAMERA DESIGN
-   ========================================================================== */
-.checkbox-container {
-    margin-bottom: 20px;
-}
-
-.checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: #231F1C;
-    border: 1px solid #36302B;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    color: #E2E2E2;
-}
-
-.checkbox-item input[type="checkbox"] {
-    accent-color: #A39E93;
-    width: 15px;
-    height: 15px;
-}
-
-/* Custom Upload Row */
-.upload-row {
-    margin-top: 15px;
-}
-
-.compact-upload-box {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background-color: #231F1C;
-    border: 1px dashed #36302B;
-    padding: 10px;
-    border-radius: 8px;
-}
-
-.btn-upload-trigger {
-    background-color: #36302B;
-    color: #FFF;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-}
-
-.btn-upload-trigger input[type="file"] {
-    display: none;
-}
-
-.file-name-preview {
-    font-size: 12.5px;
-    color: #A39E93;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* ==========================================================================
@@ -258,56 +183,34 @@ input::-webkit-inner-spin-button {
         font-size: 15px;
     }
 
-    /* --- EMERGENCY GRID FOR PWA APP LOOK --- */
-    /* Di HP kita paksa sub-grid internal tetap jalan dalam mode 12-kolom */
+    /* PWA Mobile Grid Overwrite */
     .form-grid {
         gap: 12px 10px; 
     }
 
-    /* Elemen grid default (span-8, span-6, span-4, span-3) 
-       kita overwrite otomatis menjadi 2 kolom sejajar (span 6) di HP */
+    /* Bikin elemen grid default sejajar berdua (2 kolom) di HP */
     .form-grid > [class*="span-"] {
         grid-column: span 6 !important; 
     }
 
-    /* Elemen esensial yang MEMANG HARUS penuh satu baris di HP */
+    /* Kolom input panjang yang wajib tetap full 1 baris */
     .form-grid .span-12,
     #namaSiswa, 
     #alamatSiswa,
     #imunisasi,
     #namaAyah,
-    #namaIbu,
-    .upload-row {
+    #namaIbu {
         grid-column: span 12 !important;
     }
     
-    /* Input super pendek (RT / RW / Anak Ke / Jml Saudara) sengaja dibuat 
-       tetap berdampingan pas 50%-50% (span 6) biar hemat space vertikal */
+    /* Input mini (RT / RW / Anak Ke / Jml Saudara) dipaksa tetap berpasangan 50%-50% */
     #rtSiswa, #rwSiswa, #anakKe, #jmlSaudara {
         grid-column: span 6 !important;
     }
 
-    /* --- COMPACT CHECKBOX & UPLOAD FOR MOBILE --- */
-    .checkbox-group {
-        grid-template-columns: repeat(3, 1fr); /* Dokumen fisik tersusun 3 kolom presisi */
-        gap: 8px;
-    }
-    
-    .compact-upload-box {
-        flex-direction: column; /* Kamera trigger & info teks susun atas-bawah */
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .btn-upload-trigger {
-        width: 100%; /* Tombol kamera dibikin full biar gampang ketuk pakai jempol */
-        justify-content: center;
-        padding: 12px;
-    }
-
-    /* --- STICKY / FLOATING ACTION FOR MOBILE --- */
+    /* Stacking tombol aksi biar jempol-friendly */
     .form-actions {
-        flex-direction: column-reverse; /* Tombol utama ada di paling atas saat stacking */
+        flex-direction: column-reverse;
         gap: 10px;
         margin-top: 20px;
         padding-bottom: 50px;
@@ -315,18 +218,15 @@ input::-webkit-inner-spin-button {
     
     .btn {
         width: 100%;
-        padding: 14px; /* Lebih tebal agar thumb-friendly sesuai standar PWA */
+        padding: 14px;
         justify-content: center;
         font-size: 14px;
     }
 }
 
-/* Layar Sangat Kecil / Mini (< 360px) */
+/* Optimasi layar super kecil */
 @media (max-width: 360px) {
     .form-grid > [class*="span-"] {
-        grid-column: span 12 !important; /* Jika device terlalu sempit, paksa 1 kolom total */
-    }
-    .checkbox-group {
-        grid-template-columns: repeat(2, 1fr);
+        grid-column: span 12 !important;
     }
 }
