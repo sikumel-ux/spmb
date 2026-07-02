@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RT Digital - Sistem Informasi & Kas RT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #0F766E;
+            --secondary: #157F75;
+            --accent: #1B8F84;
+            --background: #F4F7F7;
+            --card: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --danger: #EF4444;
+            --radius-large: 22px;
+            --radius-medium: 14px;
+            --shadow-soft: 0 10px 25px -5px rgba(15, 118, 110, 0.05), 0 8px 10px -6px rgba(15, 118, 110, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 90px; /* Space for bottom nav */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Container untuk mensimulasikan App Mobile Premium / Responsive Layout */
+        .app-container {
+            width: 100%;
+            max-width: 480px; /* Mobile-first container */
+            min-height: 100vh;
+            padding: 20px 16px;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 768px;
+                padding: 32px;
+            }
+            .stats-grid, .quick-menu-grid, .info-announcement-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        /* --- SKELETON LOADING ANIMATION --- */
+        .skeleton {
+            background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-medium);
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-card {
+            height: 100px;
+            width: 100%;
+            margin-bottom: 16px;
+            border-radius: var(--radius-large);
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .logo-wrapper {
+            background-color: var(--primary);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+        }
+
+        .logo-wrapper svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .header-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .header-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- HERO CARD --- */
+        .hero-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 24px;
+            border-radius: var(--radius-large);
+            box-shadow: 0 12px 20px -5px rgba(15, 118, 110, 0.3);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .hero-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 24px -5px rgba(15, 118, 110, 0.4);
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-card h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .hero-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            max-width: 85%;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: var(--primary);
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-medium);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--background);
+            transform: scale(1.03);
+        }
+
+        /* --- SECTION COMPONENT --- */
+        section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- STATS CARD / RINGKASAN KAS --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background-color: var(--card);
+            padding: 16px;
+            border-radius: var(--radius-large);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(15, 118, 110, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-icon-wrapper {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-card.saldo .stat-icon-wrapper { background-color: rgba(15, 118, 110, 0.1); color: var(--primary); }
+        .stat-card.masuk .stat-icon-wrapper { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .stat-card.keluar .stat-icon-wrapper { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .stat-card.warga .stat-icon-wrapper { background-color: rgba(27, 143, 132, 0.1); color: var(--accent); }
+
+        .stat-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-info h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* --- GRAFIK KAS (SVG AREA CHART) --- */
+        .chart-card {
+            background-color: var(--card);
+            padding: 20px;
+            border-radius: var(--radius-large);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 160px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .chart-legends {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .legend { display: flex; align-items: center; gap: 6px; }
+        .legend-in::before { content: ''; width: 12px; height: 12px; background: var(--success); border-radius: 3px; }
+        .legend-out::before { content: ''; width: 12px; height: 12px; background: var(--danger); border-radius: 3px; }
+
+        /* --- QUICK MENU GRID --- */
+        .quick-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .menu-item {
+            background-color: var(--card);
+            border-radius: var(--radius-medium);
+            padding: 14px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-soft);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .menu-icon {
+            color: var(--primary);
+            width: 28px;
+            height: 28px;
+        }
+
+        .menu-item span {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        /* --- TRANSAKSI TERBARU --- */
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .transaction-card {
+            background-color: var(--card);
+            padding: 14px 16px;
+            border-radius: var(--radius-medium);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .transaction-card:hover {
+            transform: scale(1.01);
+        }
+
+        .tx-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tx-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tx-card.plus .tx-icon-box { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .tx-card.minus .tx-icon-box { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .tx-details h4 {
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .tx-details p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .tx-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .tx-amount {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .tx-card.plus .tx-amount { color: var(--success); }
+        .tx-card.minus .tx-amount { color: var(--danger); }
+
+        .badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+        .badge.success { background-color: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+        /* --- INFO RT & PENGUMUMAN SPLIT LAYOUT --- */
+        .info-announcement-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .info-card, .announcement-card {
+            background-color: var(--card);
+            padding: 20px;
+            border-radius: var(--radius-large);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #E5E7EB;
+            font-size: 0.85rem;
+        }
+
+        .info-item:last-child { border-bottom: none; }
+        .info-label { color: var(--text-muted); font-weight: 500; }
+        .info-value { font-weight: 600; color: var(--text-main); }
+
+        .announcement-box {
+            background: linear-gradient(to right, rgba(27, 143, 132, 0.05), rgba(15, 118, 110, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+        }
+
+        .announcement-box h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--primary);
+        }
+
+        .announcement-box p {
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        /* --- FLOATING ACTION BUTTON (FAB) --- */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(27, 143, 132, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            transition: var(--transition);
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            background-color: var(--primary);
+        }
+
+        /* --- BOTTOM NAVIGATION --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+            border-radius: var(--radius-large) var(--radius-large) 0 0;
+            z-index: 100;
+        }
+
+        @media (min-width: 768px) {
+            .bottom-nav { max-width: 768px; }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.65rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            margin-bottom: 4px;
+            transition: var(--transition);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item.active svg {
+            transform: translateY(-2px);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="skeleton-loader">
+            <div class="skeleton-card skeleton" style="height: 60px;"></div>
+            <div class="skeleton-card skeleton" style="height: 180px;"></div>
+            <div class="skeleton-card skeleton" style="height: 220px;"></div>
+            <div class="skeleton-card skeleton" style="height: 120px;"></div>
+        </div>
+
+        <div id="main-content" style="display: none;">
+            
+            <header>
+                <div class="logo-wrapper">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                </div>
+                <div class="header-text">
+                    <h1>RT Digital</h1>
+                    <p>Sistem Informasi & Kas RT</p>
+                </div>
+            </header>
+
+            <div class="hero-card animate-fade">
+                <h2>Selamat Datang di RT Digital</h2>
+                <p>Kelola iuran, transparansi dana kas, dan administrasi rukun tetangga dengan mudah dalam satu genggaman digital.</p>
+                <button class="btn-primary" onclick="alert('Membuka Laporan Transparansi Kas...')">
+                    <span>Lihat Laporan Kas</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+
+            <section class="animate-fade">
+                <div class="section-title">Ringkasan Kas</div>
+                <div class="stats-grid">
+                    <div class="stat-card saldo">
+                        <div class="stat-icon-wrapper">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5 0.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <p>Total Saldo Kas</p>
+                            <h3>Rp14.350.000</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card masuk">
+                        <div class="stat-icon-wrapper">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM12 17l-5-5h3V8h4v4h3l-5 5z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <p>Pemasukan Bulan Ini</p>
+                            <h3>Rp2.450.000</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card keluar">
+                        <div class="stat-icon-wrapper">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 5l5 5h-3v4h-4v-4H7l5-5z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <p>Pengeluaran Bulan Ini</p>
+                            <h3>Rp625.000</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card warga">
+                        <div class="stat-icon-wrapper">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 1.34 5 3s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <p>Jumlah Warga</p>
+                            <h3>142 KK</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="animate-fade">
+                <div class="section-title">Grafik Tren Kas</div>
+                <div class="chart-card">
+                    <div class="chart-legends">
+                        <div class="legend legend-in">Pemasukan</div>
+                        <div class="legend legend-out">Pengeluaran</div>
+                    </div>
+                    <div class="chart-container">
+                        <svg viewBox="0 0 400 150" width="100%" height="100%" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="grad-in" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/>
+                                    <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
+                                </linearGradient>
+                                <linearGradient id="grad-out" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#EF4444" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#EF4444" stop-opacity="0.0"/>
+                                </linearGradient>
+                            </defs>
+                            <line x1="0" y1="30" x2="400" y2="30" stroke="#F3F4F6" stroke-width="1"/>
+                            <line x1="0" y1="75" x2="400" y2="75" stroke="#F3F4F6" stroke-width="1"/>
+                            <line x1="0" y1="120" x2="400" y2="120" stroke="#F3F4F6" stroke-width="1"/>
+                            
+                            <path d="M 0 120 Q 80 50 160 65 T 320 30 T 400 40 L 400 150 L 0 150 Z" fill="url(#grad-in)"/>
+                            <path d="M 0 120 Q 80 50 160 65 T 320 30 T 400 40" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+                            
+                            <path d="M 0 140 Q 80 110 160 130 T 320 95 T 400 110 L 400 150 L 0 150 Z" fill="url(#grad-out)"/>
+                            <path d="M 0 140 Q 80 110 160 130 T 320 95 T 400 110" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <section class="animate-fade">
+                <div class="section-title">Menu Cepat</div>
+                <div class="quick-menu-grid">
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <span>Data Warga</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Kas RT</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Surat Online</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <span>Pengumuman</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        <span>Jadwal Ronda</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <span>Inventaris</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <span>Pengaduan</span>
+                    </div>
+                    <div class="menu-item">
+                        <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        <span>Kontak RT</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="animate-fade">
+                <div class="section-title">Transaksi Terbaru</div>
+                <div class="transaction-list">
+                    
+                    <div class="transaction-card tx-card plus">
+                        <div class="tx-left">
+                            <div class="tx-icon-box">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                            </div>
+                            <div class="tx-details">
+                                <h4>Iuran Bulanan Pak Budi</h4>
+                                <p>02 Jul 2026 • Iuran Warga</p>
+                            </div>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount">+Rp50.000</span>
+                            <span class="badge success">Sukses</span>
+                        </div>
+                    </div>
+
+                    <div class="transaction-card tx-card minus">
+                        <div class="tx-left">
+                            <div class="tx-icon-box">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 12H4"/></svg>
+                            </div>
+                            <div class="tx-details">
+                                <h4>Pembelian Lampu Jalan</h4>
+                                <p>28 Jun 2026 • Perbaikan</p>
+                            </div>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount">-Rp175.000</span>
+                            <span class="badge success">Sukses</span>
+                        </div>
+                    </div>
+
+                    <div class="transaction-card tx-card plus">
+                        <div class="tx-left">
+                            <div class="tx-icon-box">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                            </div>
+                            <div class="tx-details">
+                                <h4>Donasi Warga</h4>
+                                <p>25 Jun 2026 • Sosial</p>
+                            </div>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount">+Rp300.000</span>
+                            <span class="badge success">Sukses</span>
+                        </div>
+                    </div>
+
+                    <div class="transaction-card tx-card minus">
+                        <div class="tx-left">
+                            <div class="tx-icon-box">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 12H4"/></svg>
+                            </div>
+                            <div class="tx-details">
+                                <h4>Perbaikan Pos Kamling</h4>
+                                <p>20 Jun 2026 • Infrastruktur</p>
+                            </div>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount">-Rp450.000</span>
+                            <span class="badge success">Sukses</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="info-announcement-grid animate-fade">
+                <div class="info-card">
+                    <div class="section-title" style="margin-bottom: 12px;">Struktur & Kontak</div>
+                    <div class="info-item">
+                        <span class="info-label">Ketua RT</span>
+                        <span class="info-value">Bpk. H. Bambang</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Bendahara</span>
+                        <span class="info-value">Bpk. Sugeng</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">WhatsApp</span>
+                        <span class="info-value" style="color: var(--accent);">+62 812-3456-789</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Sekretariat</span>
+                        <span class="info-value">No. 45 RT 02 / RW 01</span>
+                    </div>
+                </div>
+
+                <div class="announcement-card">
+                    <div class="section-title" style="margin-bottom: 12px;">Pengumuman Kegiatan</div>
+                    <div class="announcement-box">
+                        <h4>Kerja Bakti Rutin</h4>
+                        <p>Diharapkan kehadiran seluruh warga pada hari Minggu, 5 Juli 2026 jam 07:00 WIB untuk kebersihan lingkungan pra-kemerdekaan.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="fab" onclick="alert('Menu Tambah Transaksi / Laporan Cepat')">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="switchNav(this)">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="switchNav(this)">
+                <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8z"/></svg>
+                <span>Kas</span>
+            </div>
+            <div class="nav-item" onclick="switchNav(this)">
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 1.34 5 3s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                <span>Warga</span>
+            </div>
+            <div class="nav-item" onclick="switchNav(this)">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                <span>Laporan</span>
+            </div>
+            <div class="nav-item" onclick="switchNav(this)">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>Profil</span>
+            </div>
+        </nav>
+
+    </div>
+
+    <script>
+        // Simulasi Efek Loading Skeleton Tradisional (Premium App Experience)
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                document.getElementById('skeleton-loader').style.display = 'none';
+                const mainContent = document.getElementById('main-content');
+                mainContent.style.display = 'block';
+            }, 1200); // Tahan skeleton selama 1.2 detik untuk impresi memuat data riil
+        });
+
+        // Interaksi Penggantian Menu Navigasi Bawah
+        function switchNav(element) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>
