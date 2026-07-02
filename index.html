@@ -1,481 +1,208 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PPDB Online - Platform Administrasi Sekolah Premium</title>
-    <!-- Google Fonts & Font Awesome Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KOPITALIS - Form PWA</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Meta tag pendukung PWA (Bisa disesuaikan nanti dengan manifest.json) -->
+    <meta name="theme-color" content="#1A1714">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
-    <!-- Floating Background Shapes Blur -->
-    <div class="circle-shape shape-1"></div>
-    <div class="circle-shape shape-2"></div>
-
-    <!-- Sticky Header -->
-    <header class="main-header">
-        <div class="header-container">
-            <div class="brand-section">
-                <div class="logo-wrapper">
-                    <i class="fas fa-graduation-cap logo-icon"></i>
-                </div>
-                <div class="title-wrapper">
-                    <h1>SMA Unggulan Nusantara</h1>
-                    <p>Formulir Pendaftaran Peserta Didik Baru</p>
-                    <span class="badge-ta">Tahun Ajaran 2026/2027</span>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button id="themeToggle" class="btn-icon" title="Ubah Tema" aria-label="Toggle Theme">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-        </div>
-        <!-- Progress Tracker Bar -->
-        <div class="progress-container">
-            <div class="progress-bar" id="formProgressBar"></div>
-            <span class="progress-text" id="formProgressText">Pengisian: 0%</span>
-        </div>
-    </header>
-
-    <!-- Main Form Container -->
     <main class="main-content">
-        <form id="ppdbForm" novalidate>
+        <form id="pwaForm" autocomplete="off">
             
-            <!-- MASTER GRID LAYOUT SPLIT -->
-            <div class="main-form-grid">
+            <!-- BAGIAN 1: DATA UTAMA -->
+            <div class="form-card">
+                <div class="card-header">
+                    <div class="card-icon">01</div>
+                    <h2>Data Utama Siswa</h2>
+                </div>
                 
-                <!-- KOLOM KIRI: DATA UTAMA SISWA -->
-                <div class="form-column-left">
-                    
-                    <!-- CARD 1: IDENTITAS CALON PESERTA DIDIK -->
-                    <section class="form-card scroll-reveal" id="card-siswa">
-                        <div class="card-header">
-                            <div class="card-icon"><i class="fas fa-user"></i></div>
-                            <div>
-                                <h2>Identitas Calon Peserta Didik</h2>
-                                <p class="card-subtitle">Isi data pribadi calon siswa secara lengkap sesuai dokumen resmi</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-grid">
-                                <div class="form-group span-8">
-                                    <label for="namaSiswa">Nama Lengkap <span class="required">*</span></label>
-                                    <input type="text" id="namaSiswa" name="namaSiswa" class="input-control auto-capitalize" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="namaPanggilan">Nama Panggilan <span class="required">*</span></label>
-                                    <input type="text" id="namaPanggilan" name="namaPanggilan" class="input-control auto-capitalize" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <label for="nikSiswa">NIK (16 Digit) <span class="required">*</span></label>
-                                    <input type="text" id="nikSiswa" name="nikSiswa" class="input-control" maxlength="16" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <label for="kkSiswa">Nomor KK (16 Digit) <span class="required">*</span></label>
-                                    <input type="text" id="kkSiswa" name="kkSiswa" class="input-control" maxlength="16" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="tempatLahirSiswa">Tempat Lahir <span class="required">*</span></label>
-                                    <input type="text" id="tempatLahirSiswa" name="tempatLahirSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="tglLahirSiswa">Tanggal Lahir <span class="required">*</span></label>
-                                    <input type="date" id="tglLahirSiswa" name="tglLahirSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="genderSiswa">Jenis Kelamin <span class="required">*</span></label>
-                                    <select id="genderSiswa" name="genderSiswa" class="input-control" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="agamaSiswa">Agama <span class="required">*</span></label>
-                                    <select id="agamaSiswa" name="agamaSiswa" class="input-control" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Islam">Islam</option>
-                                        <option value="Kristen">Kristen</option>
-                                        <option value="Katolik">Katolik</option>
-                                        <option value="Hindu">Hindu</option>
-                                        <option value="Buddha">Buddha</option>
-                                        <option value="Khonghucu">Khonghucu</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="wargaSiswa">Kewarganegaraan <span class="required">*</span></label>
-                                    <select id="wargaSiswa" name="wargaSiswa" class="input-control" required>
-                                        <option value="WNI">WNI</option>
-                                        <option value="WNA">WNA</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="golDarah">Golongan Darah</label>
-                                    <select id="golDarah" name="golDarah" class="input-control">
-                                        <option value="-">-</option>
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
-                                        <option value="AB">AB</option>
-                                        <option value="O">O</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="anakKe">Anak Ke <span class="required">*</span></label>
-                                    <input type="number" id="anakKe" name="anakKe" class="input-control" min="1" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="jmlSaudara">Jumlah Saudara <span class="required">*</span></label>
-                                    <input type="number" id="jmlSaudara" name="jmlSaudara" class="input-control" min="0" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="statusKeluarga">Status Keluarga <span class="required">*</span></label>
-                                    <select id="statusKeluarga" name="statusKeluarga" class="input-control" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Anak Kandung">Anak Kandung</option>
-                                        <option value="Anak Angkat">Anak Angkat</option>
-                                        <option value="Anak Tiri">Anak Tiri</option>
-                                    </select>
-                                </div>
-
-                                <!-- Bagian Isian Alamat -->
-                                <div class="form-group span-12">
-                                    <label for="alamatSiswa">Alamat Lengkap Rumah <span class="required">*</span></label>
-                                    <textarea id="alamatSiswa" name="alamatSiswa" class="input-control" rows="2" maxlength="250" required></textarea>
-                                    <div class="char-counter"><span id="alamatCounter">0</span>/250 karakter</div>
-                                </div>
-                                <div class="form-group span-3">
-                                    <label for="rtSiswa">RT <span class="required">*</span></label>
-                                    <input type="text" id="rtSiswa" name="rtSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-3">
-                                    <label for="rwSiswa">RW <span class="required">*</span></label>
-                                    <input type="text" id="rwSiswa" name="rwSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <label for="desaSiswa">Desa/Kelurahan <span class="required">*</span></label>
-                                    <input type="text" id="desaSiswa" name="desaSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="kecSiswa">Kecamatan <span class="required">*</span></label>
-                                    <input type="text" id="kecSiswa" name="kecSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="kotaSiswa">Kabupaten/Kota <span class="required">*</span></label>
-                                    <input type="text" id="kotaSiswa" name="kotaSiswa" class="input-control" required>
-                                </div>
-                                <div class="form-group span-4 dropdown-searchable">
-                                    <label for="provSearch">Provinsi <span class="required">*</span></label>
-                                    <div class="search-select-box">
-                                        <input type="text" id="provSearch" class="input-control" placeholder="Cari Provinsi..." autocomplete="off" required>
-                                        <input type="hidden" id="provSiswa" name="provSiswa">
-                                        <div class="search-options" id="provOptions"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group span-4">
-                                    <label for="posSiswa">Kode Pos <span class="required">*</span></label>
-                                    <input type="text" id="posSiswa" name="posSiswa" class="input-control" maxlength="5" required>
-                                </div>
-
-                                <!-- Riwayat Medis -->
-                                <div class="form-group span-12">
-                                    <label for="imunisasi">Riwayat Imunisasi Lengkap <span class="required">*</span></label>
-                                    <input type="text" id="imunisasi" name="imunisasi" class="input-control" placeholder="Contoh: BCG, DPT, Polio, Campak, Hepatitis" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <label for="sehatKhusus">Kondisi Kesehatan Khusus</label>
-                                    <input type="text" id="sehatKhusus" name="sehatKhusus" class="input-control" placeholder="Isi jika ada catatan medis">
-                                </div>
-                                <div class="form-group span-6">
-                                    <label for="alergi">Alergi Medis / Makanan</label>
-                                    <input type="text" id="alergi" name="alergi" class="input-control" placeholder="Isi jika ada">
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- KOLOM KANAN: PANEL WALI & DOKUMEN SIDEBAR -->
-                <div class="form-column-right">
-                    
-                    <!-- CARD 2 & 3: IDENTITAS ORANG TUA (ROW COMPACT STYLE) -->
-                    <section class="form-card scroll-reveal" id="card-ortu">
-                        <div class="card-header">
-                            <div class="card-icon"><i class="fas fa-users"></i></div>
-                            <div>
-                                <h2>Data Orang Tua Kandung</h2>
-                                <p class="card-subtitle">Masukkan rincian identitas Ayah & Ibu</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <!-- SEKSI DATA AYAH -->
-                            <h3 class="inner-section-title"><i class="fas fa-user-tie"></i> Data Ayah</h3>
-                            <div class="form-grid row-gap-sm">
-                                <div class="form-group span-12">
-                                    <input type="text" id="namaAyah" name="namaAyah" class="input-control auto-capitalize" placeholder="Nama Lengkap Ayah *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="text" id="nikAyah" name="nikAyah" class="input-control" maxlength="16" placeholder="NIK Ayah *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="tel" id="hpAyah" name="hpAyah" class="input-control" placeholder="No HP/WhatsApp *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <select id="eduAyah" name="eduAyah" class="input-control" required>
-                                        <option value="">Pendidikan Terakhir *</option>
-                                        <option value="SD">SD / Sederajat</option>
-                                        <option value="SMP">SMP / Sederajat</option>
-                                        <option value="SMA">SMA / Sederajat</option>
-                                        <option value="D3">Diploma (D3)</option>
-                                        <option value="S1">Sarjana (S1)</option>
-                                        <option value="S2/S3">Pascasarjana</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="text" id="kerjaAyah" name="kerjaAyah" class="input-control" placeholder="Pekerjaan *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <select id="gajiAyah" name="gajiAyah" class="input-control" required>
-                                        <option value="">Penghasilan Bulanan *</option>
-                                        <option value="< Rp2.000.000">&lt; Rp2.000.000</option>
-                                        <option value="Rp2.000.000 - Rp5.000.000">Rp2.000.000 - Rp5.000.000</option>
-                                        <option value="Rp5.000.000 - Rp10.000.000">Rp5.000.000 - Rp10.000.000</option>
-                                        <option value="> Rp10.000.000">&gt; Rp10.000.000</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="email" id="emailAyah" name="emailAyah" class="input-control" placeholder="Email Aktif *" required>
-                                </div>
-                            </div>
-
-                            <hr class="form-divider">
-
-                            <!-- SEKSI DATA IBU -->
-                            <h3 class="inner-section-title"><i class="fas fa-user-friends"></i> Data Ibu</h3>
-                            <div class="form-grid row-gap-sm">
-                                <div class="form-group span-12">
-                                    <input type="text" id="namaIbu" name="namaIbu" class="input-control auto-capitalize" placeholder="Nama Lengkap Ibu *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="text" id="nikIbu" name="nikIbu" class="input-control" maxlength="16" placeholder="NIK Ibu *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="tel" id="hpIbu" name="hpIbu" class="input-control" placeholder="No HP/WhatsApp *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <select id="eduIbu" name="eduIbu" class="input-control" required>
-                                        <option value="">Pendidikan Terakhir *</option>
-                                        <option value="SD">SD / Sederajat</option>
-                                        <option value="SMP">SMP / Sederajat</option>
-                                        <option value="SMA">SMA / Sederajat</option>
-                                        <option value="D3">Diploma (D3)</option>
-                                        <option value="S1">Sarjana (S1)</option>
-                                        <option value="S2/S3">Pascasarjana</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="text" id="kerjaIbu" name="kerjaIbu" class="input-control" placeholder="Pekerjaan *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <select id="gajiIbu" name="gajiIbu" class="input-control" required>
-                                        <option value="">Penghasilan Bulanan *</option>
-                                        <option value="< Rp2.000.000">&lt; Rp2.000.000</option>
-                                        <option value="Rp2.000.000 - Rp5.000.000">Rp2.000.000 - Rp5.000.000</option>
-                                        <option value="Rp5.000.000 - Rp10.000.000">Rp5.000.000 - Rp10.000.000</option>
-                                        <option value="> Rp10.000.000">&gt; Rp10.000.000</option>
-                                    </select>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="email" id="emailIbu" name="emailIbu" class="input-control" placeholder="Email Aktif *" required>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- CARD 4: KONTAK DARURAT -->
-                    <section class="form-card scroll-reveal" id="card-darurat">
-                        <div class="card-header">
-                            <div class="card-icon"><i class="fas fa-phone-alt"></i></div>
-                            <div>
-                                <h2>Kontak Darurat</h2>
-                                <p class="card-subtitle">Hubungan selain orang tua yang bisa dihubungi</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-grid row-gap-sm">
-                                <div class="form-group span-6">
-                                    <input type="text" id="namaDarurat" name="namaDarurat" class="input-control auto-capitalize" placeholder="Nama Kontak *" required>
-                                </div>
-                                <div class="form-group span-6">
-                                    <input type="text" id="hubDarurat" name="hubDarurat" class="input-control" placeholder="Hubungan Keluarga *" required>
-                                </div>
-                                <div class="form-group span-12">
-                                    <input type="tel" id="hpDarurat" name="hpDarurat" class="input-control" placeholder="Nomor Handphone *" required>
-                                </div>
-                                <div class="form-group span-12">
-                                    <textarea id="alamatDarurat" name="alamatDarurat" class="input-control" rows="1" placeholder="Alamat Singkat *" required></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- CARD 5: DOKUMEN PENDUKUNG -->
-                    <section class="form-card scroll-reveal" id="card-dokumen">
-                        <div class="card-header">
-                            <div class="card-icon"><i class="fas fa-file-upload"></i></div>
-                            <div>
-                                <h2>Dokumen Berkas Digital</h2>
-                                <p class="card-subtitle">Gunakan format berkas PDF/JPG (Max 2MB)</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <!-- Checkbox Checklist Berkas Fisik -->
-                            <label class="section-sublabel">Kelengkapan Berkas Fisik Fisik:</label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkKk" value="Fotokopi KK">
-                                    <span class="checkmark"></span> FC KK
-                                </label>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkAkta" value="Akta Kelahiran">
-                                    <span class="checkmark"></span> Akta Lahir
-                                </label>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkKtp" value="KTP Orang Tua">
-                                    <span class="checkmark"></span> KTP Ortu
-                                </label>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkFoto" value="Pas Foto">
-                                    <span class="checkmark"></span> Pas Foto
-                                </label>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkKia" value="KIA">
-                                    <span class="checkmark"></span> KIA
-                                </label>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkImun" value="Buku Imunisasi">
-                                    <span class="checkmark"></span> Buku Imun
-                                </label>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="chkLain" value="Dokumen Lain">
-                                    <span class="checkmark"></span> Berkas Lain
-                                </label>
-                            </div>
-
-                            <!-- Panel Unggahan Berkas Premium Compact Layout -->
-                            <div class="upload-zone-wrapper-compact">
-                                <div class="upload-row">
-                                    <div class="upload-label">Kartu Keluarga (KK) <span class="required">*</span></div>
-                                    <div class="compact-upload-box">
-                                        <input type="file" id="upKK" name="upKK" accept=".pdf,.jpg,.jpeg" required>
-                                        <label for="upKK" class="btn-upload-trigger"><i class="fas fa-upload"></i> Pilih File</label>
-                                        <div class="file-preview" id="preview-upKK">Belum ada berkas</div>
-                                    </div>
-                                </div>
-                                <div class="upload-row">
-                                    <div class="upload-label">Akta Kelahiran <span class="required">*</span></div>
-                                    <div class="compact-upload-box">
-                                        <input type="file" id="upAkta" name="upAkta" accept=".pdf,.jpg,.jpeg" required>
-                                        <label for="upAkta" class="btn-upload-trigger"><i class="fas fa-upload"></i> Pilih File</label>
-                                        <div class="file-preview" id="preview-upAkta">Belum ada berkas</div>
-                                    </div>
-                                </div>
-                                <div class="upload-row">
-                                    <div class="upload-label">Pas Foto Terbaru <span class="required">*</span></div>
-                                    <div class="compact-upload-box">
-                                        <input type="file" id="upFoto" name="upFoto" accept=".jpg,.jpeg" required>
-                                        <label for="upFoto" class="btn-upload-trigger"><i class="fas fa-upload"></i> Pilih File</label>
-                                        <div class="file-preview" id="preview-upFoto">Belum ada berkas</div>
-                                    </div>
-                                </div>
-                                <div class="upload-row">
-                                    <div class="upload-label">Dokumen Tambahan (Sertifikat/Piagam)</div>
-                                    <div class="compact-upload-box">
-                                        <input type="file" id="upLain" name="upLain" accept=".pdf,.jpg,.jpeg">
-                                        <label for="upLain" class="btn-upload-trigger"><i class="fas fa-upload"></i> Pilih File</label>
-                                        <div class="file-preview" id="preview-upLain">Belum ada berkas</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                <div class="form-grid">
+                    <div class="form-group span-6">
+                        <label for="nikSiswa">NIK Siswa</label>
+                        <input type="number" id="nikSiswa" placeholder="3404...">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="noKk">No. Kartu Keluarga</label>
+                        <input type="number" id="noKk" placeholder="3404...">
+                    </div>
+                    <div class="form-group span-12">
+                        <label for="namaSiswa">Nama Lengkap Siswa</label>
+                        <input type="text" id="namaSiswa" placeholder="Nama sesuai ijazah/akta">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="tempatLahir">Tempat Lahir</label>
+                        <input type="text" id="tempatLahir" placeholder="Kota/Kabupaten">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="tglLahir">Tanggal Lahir</label>
+                        <input type="date" id="tglLahir">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="gender">Jenis Kelamin</label>
+                        <select id="gender">
+                            <option value="">Pilih...</option>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="agama">Agama</label>
+                        <select id="agama">
+                            <option value="">Pilih...</option>
+                            <option value="Islam">Islam</option>
+                            <option value="Kristen">Kristen</option>
+                            <option value="Katolik">Katolik</option>
+                            <option value="Hindu">Hindu</option>
+                            <option value="Budha">Budha</option>
+                            <option value="Konghucu">Konghucu</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- Form Actions Group Panel -->
-            <div class="form-actions scroll-reveal">
-                <button type="button" id="btnReset" class="btn btn-secondary ripple">
-                    <i class="fas fa-undo"></i> Bersihkan Form
-                </button>
-                <button type="button" id="btnPreview" class="btn btn-info ripple">
-                    <i class="fas fa-eye"></i> Preview Isian Data
-                </button>
-                <button type="submit" id="btnSubmit" class="btn btn-primary ripple">
-                    <i class="fas fa-paper-plane"></i> Kirim Form Pendaftaran
-                </button>
+            <!-- BAGIAN 2: ALAMAT & KONTAK -->
+            <div class="form-card">
+                <div class="card-header">
+                    <div class="card-icon">02</div>
+                    <h2>Alamat & Kontak</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group span-12">
+                        <label for="alamatSiswa">Alamat Jalan / Dusun</label>
+                        <input type="text" id="alamatSiswa" placeholder="Nama jalan, nomor rumah, rt/rw">
+                    </div>
+                    <div class="form-group span-3">
+                        <label for="rtSiswa">RT</label>
+                        <input type="number" id="rtSiswa" placeholder="000">
+                    </div>
+                    <div class="form-group span-3">
+                        <label for="rwSiswa">RW</label>
+                        <input type="number" id="rwSiswa" placeholder="000">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="noHp">No. Handphone (WhatsApp)</label>
+                        <input type="tel" id="noHp" placeholder="08...">
+                    </div>
+                    <div class="form-group span-4">
+                        <label for="anakKe">Anak Ke-</label>
+                        <input type="number" id="anakKe" placeholder="1">
+                    </div>
+                    <div class="form-group span-4">
+                        <label for="jmlSaudara">Jml. Saudara</label>
+                        <input type="number" id="jmlSaudara" placeholder="0">
+                    </div>
+                    <div class="form-group span-4">
+                        <label for="imunisasi">Status Imunisasi</label>
+                        <select id="imunisasi">
+                            <option value="Lengkap">Lengkap</option>
+                            <option value="Belum Lengkap">Belum Lengkap</option>
+                        </select>
+                    </div>
+                </div>
             </div>
+
+            <!-- BAGIAN 3: DATA ORANG TUA -->
+            <div class="form-card">
+                <div class="card-header">
+                    <div class="card-icon">03</div>
+                    <h2>Data Orang Tua</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group span-6">
+                        <label for="namaAyah">Nama Lengkap Ayah</label>
+                        <input type="text" id="namaAyah" placeholder="Nama ayah kandung">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="pekerjaanAyah">Pekerjaan Ayah</label>
+                        <input type="text" id="pekerjaanAyah" placeholder="Pekerjaan">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="namaIbu">Nama Lengkap Ibu</label>
+                        <input type="text" id="namaIbu" placeholder="Nama ibu kandung">
+                    </div>
+                    <div class="form-group span-6">
+                        <label for="pekerjaanIbu">Pekerjaan Ibu</label>
+                        <input type="text" id="pekerjaanIbu" placeholder="Pekerjaan">
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 4: BERKAS FISIK & UPLOAD -->
+            <div class="form-card">
+                <div class="card-header">
+                    <div class="card-icon">04</div>
+                    <h2>Kelengkapan Berkas (PWA Upload)</h2>
+                </div>
+                
+                <!-- Checkbox Dokumen Fisik -->
+                <div class="checkbox-container">
+                    <label class="section-sub-label">Ceklis Dokumen Fisik yang Diserahkan:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="berkas" value="KK">
+                            <span>KK</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="berkas" value="Akta">
+                            <span>Akta</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="berkas" value="KTP">
+                            <span>KTP Ot</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="berkas" value="Ijazah">
+                            <span>Ijazah</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="berkas" value="KIA">
+                            <span>KIA</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="berkas" value="KPS">
+                            <span>KPS/KIP</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Kamera / File Upload Row -->
+                <div class="upload-row">
+                    <div class="form-group span-12">
+                        <label>Upload Berkas / Foto Langsung via HP</label>
+                        <div class="compact-upload-box">
+                            <label class="btn-upload-trigger">
+                                <input type="file" accept="image/*" id="fileBerkas" capture="environment">
+                                <span>Ambil Foto / Berkas</span>
+                            </label>
+                            <span class="file-name-preview" id="fileName">Belum ada file terpilih</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOMBOL AKSI -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('pwaForm').reset()">Reset Form</button>
+                <button type="submit" class="btn btn-primary">Simpan Data (Kirim)</button>
+            </div>
+
         </form>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="main-footer">
-        <p>&copy; 2026 SMA Unggulan Nusantara. Seluruh Hak Cipta Dilindungi. | Sistem Informasi PPDB Versi 1.1.0</p>
-        <p class="tech-stack">Dibangun menggunakan arsitektur asli <span class="ts-badge">HTML5</span> <span class="ts-badge">CSS3</span> <span class="ts-badge">Vanilla JavaScript</span>.</p>
-    </footer>
-
-    <!-- MODAL WINDOW SYSTEM: PREVIEW DATA -->
-    <div class="modal" id="previewModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-file-invoice"></i> Resume Berkas Pendaftaran Siswa</h3>
-                <button class="close-modal" id="closePreview" aria-label="Tutup">&times;</button>
-            </div>
-            <div class="modal-body" id="previewContainer">
-                <!-- Konten dinamis diisi oleh engine JavaScript -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnEditKembali">Kembali Perbaiki</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL WINDOW SYSTEM: CONFIRM SUBMIT -->
-    <div class="modal" id="confirmModal">
-        <div class="modal-content modal-sm">
-            <div class="modal-header">
-                <h3>Konfirmasi Pengiriman Berkas</h3>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin data pendaftaran sudah diperiksa kembali dengan benar? Berkas tidak dapat diperbaiki ulang secara mandiri setelah pengiriman dikonfirmasi.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnCancelSubmit">Batal</button>
-                <button class="btn btn-primary" id="btnFinalSubmit">Kirim Berkas Sekarang</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LOADING SCREEN OVERLAY -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner-wrapper">
-            <div class="premium-spinner"></div>
-            <p>Mengamankan Data & Mengunggah Berkas Berlangsung...</p>
-        </div>
-    </div>
-
-    <!-- TOAST INSTANT NOTIFICATION CONTAINER -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- BACK TO TOP BACKPLANE -->
-    <button id="backToTop" class="back-to-top" title="Kembali ke atas" aria-label="Scroll ke atas">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <script src="app.js"></script>
+    <script>
+        // Preview nama file ketika user upload lewat kamera/galeri HP
+        document.getElementById('fileBerkas').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Belum ada file terpilih';
+            document.getElementById('fileName').textContent = fileName;
+        });
+    </script>
 </body>
 </html>
