@@ -1,10 +1,10 @@
 /* ==========================================================================
-   CSS VARIABLES & DESIGN SYSTEM (Premium Emerald & Mint)
+   DESIGN SYSTEM CORE VARIABLES (Emerald, Mint, Glassmorphism, & Dark Mode)
    ========================================================================== */
 :root {
-    /* Color Palette */
+    /* Color Palette Specs */
     --primary-gradient: linear-gradient(135deg, #046a38 0%, #00a86b 100%);
-    --bg-gradient: linear-gradient(135deg, #f4f7f5 0%, #e8f0ec 100%);
+    --bg-gradient: linear-gradient(135deg, #f3f7f5 0%, #e6efe9 100%);
     --emerald-dark: #046a38;
     --emerald-light: #00a86b;
     --mint: #a3e4d7;
@@ -19,36 +19,35 @@
     --error-color: #dc3545;
     --info-color: #0dcaf0;
     
-    /* Glassmorphism & Shadows */
-    --glass-bg: rgba(255, 255, 255, 0.75);
+    /* Layout & Component Specs */
+    --glass-bg: rgba(255, 255, 255, 0.78);
     --glass-border: rgba(255, 255, 255, 0.6);
-    --soft-shadow: 0 8px 32px 0 rgba(4, 106, 56, 0.08);
-    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+    --soft-shadow: 0 8px 32px 0 rgba(4, 106, 56, 0.06);
+    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.03);
     --inner-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 
-    /* Layout & Component Specifications */
-    --radius-lg: 22px;
+    --radius-lg: 20px;
     --radius-md: 12px;
-    --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    --transition-smooth: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Dark Mode Variables Override */
+/* Dark Mode Variables Theme Override */
 [data-theme="dark"] {
-    --bg-gradient: linear-gradient(135deg, #121413 0%, #1a1e1c 100%);
-    --glass-bg: rgba(26, 30, 28, 0.85);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --white: #1e2321;
-    --gray-light: #252b28;
-    --gray-mid: #2c3430;
+    --bg-gradient: linear-gradient(135deg, #101311 0%, #171c19 100%);
+    --glass-bg: rgba(24, 29, 26, 0.88);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --white: #1b211e;
+    --gray-light: #222925;
+    --gray-mid: #2c3530;
     --gray-text: #cbd5e1;
     --gray-muted: #94a3b8;
     --dark-text: #f8fafc;
-    --soft-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    --soft-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
 /* ==========================================================================
-   BASE STYLES & RESET
+   BASE APPLICATION RESET & BLUR ELEMENTS
    ========================================================================== */
 * {
     margin: 0;
@@ -67,52 +66,50 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
-    padding-bottom: 60px;
 }
 
-/* Decorative Blur Elements */
+/* Floating Blurred Vector Backdrop Background */
 .circle-shape {
     position: absolute;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(120px);
     z-index: -1;
-    opacity: 0.4;
+    opacity: 0.35;
     transition: var(--transition-smooth);
 }
 .shape-1 {
-    width: 400px;
-    height: 400px;
+    width: 450px;
+    height: 450px;
     background: var(--mint);
-    top: -100px;
-    right: -50px;
+    top: -120px;
+    right: -60px;
 }
 .shape-2 {
-    width: 500px;
-    height: 500px;
+    width: 550px;
+    height: 550px;
     background: var(--emerald-light);
-    bottom: 200px;
-    left: -150px;
+    bottom: 150px;
+    left: -180px;
 }
 
 /* ==========================================================================
-   HEADER SECTION & STICKY SYSTEM
+   STICKY GLASSMORPHISM HEADER & PROGRESS
    ========================================================================== */
 .main-header {
     position: sticky;
     top: 0;
     z-index: 1000;
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-bottom: 1px solid var(--glass-border);
     box-shadow: var(--soft-shadow);
-    transition: var(--transition-smooth);
 }
 
 .header-container {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 15px 24px;
+    padding: 14px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -125,20 +122,20 @@ body {
 }
 
 .logo-wrapper {
-    width: 55px;
-    height: 55px;
+    width: 52px;
+    height: 52px;
     background: var(--primary-gradient);
-    border-radius: 16px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 24px;
-    box-shadow: 0 4px 15px rgba(4, 106, 56, 0.3);
+    font-size: 22px;
+    box-shadow: 0 4px 15px rgba(4, 106, 56, 0.25);
 }
 
 .title-wrapper h1 {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.5px;
     color: var(--emerald-dark);
@@ -148,30 +145,29 @@ body {
 }
 
 .title-wrapper p {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--gray-muted);
     font-weight: 500;
 }
 
 .badge-ta {
     display: inline-block;
-    padding: 2px 10px;
+    padding: 1px 9px;
     background: var(--mint-light);
     color: var(--emerald-dark);
     font-size: 11px;
     font-weight: 700;
     border-radius: 50px;
-    margin-top: 4px;
+    margin-top: 3px;
 }
 [data-theme="dark"] .badge-ta {
     background: var(--gray-mid);
     color: var(--emerald-light);
 }
 
-/* Theme Toggle Button */
 .btn-icon {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     border: none;
     background: var(--gray-light);
@@ -180,18 +176,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     transition: var(--transition-smooth);
 }
 .btn-icon:hover {
     background: var(--mint);
-    transform: rotate(30deg);
+    transform: rotate(25deg);
 }
 
-/* Progress Tracker Bar */
+/* Linear Tracker System */
 .progress-container {
     width: 100%;
-    height: 6px;
+    height: 5px;
     background: var(--gray-mid);
     position: relative;
 }
@@ -204,62 +200,70 @@ body {
 .progress-text {
     position: absolute;
     right: 24px;
-    top: 10px;
-    font-size: 12px;
+    top: 9px;
+    font-size: 11.5px;
     font-weight: 700;
     color: var(--emerald-dark);
     background: var(--white);
     padding: 2px 8px;
     border-radius: 6px;
     box-shadow: var(--soft-shadow);
+    border: 1px solid var(--glass-border);
 }
 
 /* ==========================================================================
-   LAYOUT & CONTAINER MAIN
+   MASTER DUAL-COLUMN GRID STRUCTURING
    ========================================================================== */
 .main-content {
-    max-width: 950px;
-    margin: 40px auto;
-    padding: 0 20px;
+    max-width: 1300px;
+    margin: 35px auto;
+    padding: 0 24px;
+}
+
+.main-form-grid {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 28px;
+    align-items: start;
 }
 
 /* ==========================================================================
-   CARD STYLING & STRUCTURE
+   CARD ARCHITECTURE
    ========================================================================== */
 .form-card {
     background: var(--white);
     border-radius: var(--radius-lg);
     border: 1px solid var(--glass-border);
     box-shadow: var(--card-shadow);
-    padding: 35px;
-    margin-bottom: 35px;
+    padding: 28px;
+    margin-bottom: 28px;
     transition: var(--transition-smooth);
 }
 
 .form-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(4, 106, 56, 0.06);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(4, 106, 56, 0.05);
 }
 
 .card-header {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     border-bottom: 2px solid var(--gray-light);
-    padding-bottom: 15px;
+    padding-bottom: 14px;
 }
 
 .card-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     background: var(--mint-light);
     color: var(--emerald-dark);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 18px;
 }
 [data-theme="dark"] .card-icon {
     background: var(--gray-mid);
@@ -267,43 +271,46 @@ body {
 }
 
 .card-header h2 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--dark-text);
 }
 
+.card-subtitle {
+    font-size: 12px;
+    color: var(--gray-muted);
+    margin-top: 2px;
+}
+
 /* ==========================================================================
-   FORM CONTROLS & GRID SYSTEM
+   INTERNAL 12-COLUMN CONTROL SYSTEM
    ========================================================================== */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 20px 24px;
+    gap: 16px 20px;
+}
+.form-grid.row-gap-sm {
+    gap: 12px 14px;
 }
 
+/* Responsive Column Spans Grid */
+.span-12 { grid-column: span 12; }
+.span-8  { grid-column: span 8; }
+.span-6  { grid-column: span 6; }
+.span-4  { grid-column: span 4; }
+.span-3  { grid-column: span 3; }
+
 .form-group {
-    grid-column: span 4;
     display: flex;
     flex-direction: column;
     position: relative;
 }
 
-.form-group.large {
-    grid-column: span 12;
-}
-
-.form-group.medium {
-    grid-column: span 6;
-}
-
-.form-group.mini {
-    grid-column: span 2;
-}
-
 label {
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--dark-text);
 }
 
@@ -311,11 +318,11 @@ label {
     color: var(--error-color);
 }
 
-/* Input Styles */
+/* Element Fields Controls Styling */
 .input-control {
     width: 100%;
-    padding: 13px 16px;
-    font-size: 14px;
+    padding: 11px 14px;
+    font-size: 13.5px;
     font-weight: 500;
     border-radius: var(--radius-md);
     border: 1px solid var(--gray-mid);
@@ -329,33 +336,56 @@ label {
 .input-control:focus {
     border-color: var(--emerald-light);
     background-color: var(--white);
-    box-shadow: 0 0 0 4px rgba(0, 168, 107, 0.15);
+    box-shadow: 0 0 0 4px rgba(0, 168, 107, 0.12);
 }
 
-/* Error UI State */
+textarea.input-control {
+    resize: vertical;
+}
+
+/* Form Group Validation Error States */
 .form-group.has-error .input-control {
     border-color: var(--error-color);
-    background-color: rgba(220, 53, 69, 0.02);
+    background-color: rgba(220, 53, 69, 0.01);
 }
 
 .error-message {
     color: var(--error-color);
     font-size: 11px;
     font-weight: 600;
-    margin-top: 5px;
-    animation: slideUp 0.3s ease;
+    margin-top: 4px;
+    animation: slideUp 0.25s ease-out forwards;
 }
 
-/* Character Counter Textarea */
 .char-counter {
     text-align: right;
     font-size: 11px;
     color: var(--gray-muted);
-    margin-top: 4px;
+    margin-top: 3px;
+}
+
+.inner-section-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--emerald-dark);
+    margin: 14px 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+[data-theme="dark"] .inner-section-title {
+    color: var(--emerald-light);
+}
+
+.form-divider {
+    border: 0;
+    height: 1px;
+    background: var(--gray-mid);
+    margin: 18px 0 12px 0;
 }
 
 /* ==========================================================================
-   SEARCHABLE DROPDOWN (PROVINSI)
+   SEARCHABLE DROPDOWN (PROVINSI ENGINE)
    ========================================================================== */
 .dropdown-searchable {
     position: relative;
@@ -372,9 +402,9 @@ label {
     background: var(--white);
     border: 1px solid var(--gray-mid);
     border-radius: var(--radius-md);
-    max-height: 200px;
+    max-height: 180px;
     overflow-y: auto;
-    z-index: 50;
+    z-index: 90;
     box-shadow: var(--card-shadow);
     display: none;
     margin-top: 5px;
@@ -383,8 +413,8 @@ label {
     display: block;
 }
 .search-option-item {
-    padding: 12px 16px;
-    font-size: 14px;
+    padding: 10px 14px;
+    font-size: 13.5px;
     cursor: pointer;
     transition: background 0.2s;
     color: var(--dark-text);
@@ -395,35 +425,32 @@ label {
 }
 
 /* ==========================================================================
-   CHECKBOX & MULTIPLE CHOICE
+   CHECKBOX MULTIPLE SELECTION COMPONENTS
    ========================================================================== */
 .section-sublabel {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    margin: 15px 0 10px 0;
-    color: var(--emerald-dark);
-}
-[data-theme="dark"] .section-sublabel {
-    color: var(--emerald-light);
+    margin: 4px 0 10px 0;
+    color: var(--gray-text);
 }
 
 .checkbox-group {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-    margin-bottom: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .checkbox-container {
     display: block;
     position: relative;
-    padding-left: 32px;
+    padding-left: 26px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 12.5px;
+    font-weight: 600;
     user-select: none;
-    line-height: 20px;
+    line-height: 18px;
 }
 .checkbox-container input {
     position: absolute;
@@ -436,10 +463,10 @@ label {
     position: absolute;
     top: 0;
     left: 0;
-    height: 20px;
-    width: 20px;
+    height: 18px;
+    width: 18px;
     background-color: var(--gray-mid);
-    border-radius: 6px;
+    border-radius: 5px;
     transition: var(--transition-smooth);
 }
 .checkbox-container:hover input ~ .checkmark {
@@ -457,96 +484,97 @@ label {
     display: block;
 }
 .checkbox-container .checkmark:after {
-    left: 7px;
-    top: 3px;
-    width: 5px;
-    height: 10px;
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
 
 /* ==========================================================================
-   UPLOAD DRAG & DROP ZONE
+   COMPACT LIST ROW SIDEBAR UPLOAD SYSTEM
    ========================================================================== */
-.upload-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+.upload-zone-wrapper-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
-.upload-box {
+.upload-row {
     background: var(--gray-light);
-    border: 1px dashed var(--gray-mid);
+    padding: 12px 14px;
     border-radius: var(--radius-md);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+    border: 1px solid var(--gray-mid);
 }
-.file-drop-area {
-    position: relative;
+.upload-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.compact-upload-box {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 20px;
-    border: 2px dashed rgba(0, 168, 107, 0.2);
-    border-radius: var(--radius-md);
+    gap: 12px;
+    position: relative;
+}
+.compact-upload-box input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    z-index: -1;
+}
+.btn-upload-trigger {
     background: var(--white);
+    border: 1px solid var(--emerald-light);
+    color: var(--emerald-dark);
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
     cursor: pointer;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     transition: var(--transition-smooth);
 }
-.file-drop-area:hover {
-    border-color: var(--emerald-light);
-    background-color: var(--mint-light);
+.btn-upload-trigger:hover {
+    background: var(--primary-gradient);
+    color: white;
 }
-.file-drop-area i {
-    font-size: 28px;
+[data-theme="dark"] .btn-upload-trigger {
     color: var(--emerald-light);
-    margin-bottom: 8px;
-}
-.file-drop-area span {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gray-text);
-}
-.file-drop-area input[type="file"] {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
+    background: var(--gray-mid);
 }
 .file-preview {
     font-size: 11px;
-    color: var(--emerald-dark);
-    margin-top: 8px;
+    color: var(--gray-muted);
     font-weight: 600;
     word-break: break-all;
 }
 
 /* ==========================================================================
-   BUTTONS & RIPPLE EFFECT SYSTEM
+   BUTTON ARCHITECTURE & MICRO-INTERACTION RIPPLES
    ========================================================================== */
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 16px;
-    margin-top: 20px;
+    gap: 14px;
+    margin-top: 10px;
+    margin-bottom: 40px;
 }
 
 .btn {
-    padding: 14px 28px;
-    font-size: 15px;
+    padding: 12px 24px;
+    font-size: 14px;
     font-weight: 700;
     border-radius: var(--radius-md);
     border: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     position: relative;
     overflow: hidden;
     transition: var(--transition-smooth);
@@ -555,11 +583,11 @@ label {
 .btn-primary {
     background: var(--primary-gradient);
     color: white;
-    box-shadow: 0 4px 18px rgba(4, 106, 56, 0.25);
+    box-shadow: 0 4px 18px rgba(4, 106, 56, 0.2);
 }
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(4, 106, 56, 0.35);
+    box-shadow: 0 6px 22px rgba(4, 106, 56, 0.3);
 }
 
 .btn-secondary {
@@ -578,13 +606,13 @@ label {
     background: var(--mint);
 }
 
-/* Custom Ripple Effect Code via JS mapping */
+/* Mechanical Ripple Dynamic Wave Rendering */
 .ripple-wave {
     position: absolute;
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.35);
     border-radius: 50%;
     transform: scale(0);
-    animation: ripple-animation 0.6s linear;
+    animation: ripple-animation 0.55s linear;
     pointer-events: none;
 }
 @keyframes ripple-animation {
@@ -595,7 +623,7 @@ label {
 }
 
 /* ==========================================================================
-   MODAL WINDOW DIALOG
+   MODAL REGISTRATION SYSTEM OVERLAYS
    ========================================================================== */
 .modal {
     position: fixed;
@@ -603,8 +631,8 @@ label {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -621,70 +649,69 @@ label {
     background: var(--white);
     border-radius: var(--radius-lg);
     width: 90%;
-    max-width: 750px;
-    max-height: 85vh;
+    max-width: 700px;
+    max-height: 82vh;
     overflow-y: auto;
-    padding: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-    transform: scale(0.9);
+    padding: 26px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+    transform: scale(0.92);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .modal.active .modal-content {
     transform: scale(1);
 }
 .modal-sm {
-    max-width: 450px;
+    max-width: 420px;
 }
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--gray-mid);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
 }
 .modal-header h3 {
-    font-size: 18px;
+    font-size: 17px;
     color: var(--emerald-dark);
 }
 .close-modal {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 22px;
     cursor: pointer;
     color: var(--gray-muted);
 }
 .modal-footer {
     border-top: 1px solid var(--gray-mid);
-    padding-top: 15px;
-    margin-top: 20px;
+    padding-top: 14px;
+    margin-top: 18px;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
 
-/* Preview Data Table Style Inside Modal */
+/* Table Resume Inner Modal Styling */
 .preview-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
 }
 .preview-table th {
     background: var(--gray-light);
     color: var(--emerald-dark);
     text-align: left;
-    padding: 10px;
-    font-size: 14px;
+    padding: 8px 12px;
+    font-size: 13px;
     border-bottom: 2px solid var(--gray-mid);
 }
 .preview-table td {
-    padding: 10px;
-    font-size: 13.5px;
+    padding: 8px 12px;
+    font-size: 13px;
     border-bottom: 1px solid var(--gray-light);
 }
 
 /* ==========================================================================
-   LOADING SCREEN OVERLAY
+   PROCESSING ENGINE SPIN OVERLAY
    ========================================================================== */
 .loading-overlay {
     position: fixed;
@@ -692,7 +719,7 @@ label {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.85);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -702,7 +729,7 @@ label {
     transition: opacity 0.3s;
 }
 [data-theme="dark"] .loading-overlay {
-    background: rgba(26, 30, 28, 0.95);
+    background: rgba(24, 29, 26, 0.95);
 }
 .loading-overlay.active {
     opacity: 1;
@@ -712,16 +739,16 @@ label {
     text-align: center;
 }
 .premium-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--mint);
+    width: 44px;
+    height: 44px;
+    border: 3.5px solid var(--mint);
     border-top-color: var(--emerald-dark);
     border-radius: 50%;
-    animation: spin 1s infinite linear;
-    margin: 0 auto 15px auto;
+    animation: spin 0.85s infinite linear;
+    margin: 0 auto 12px auto;
 }
 .spinner-wrapper p {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--emerald-dark);
 }
@@ -730,47 +757,44 @@ label {
 }
 
 /* ==========================================================================
-   TOAST NOTIFICATION SYSTEM
+   SYSTEM TOAST ENGINE & MICROMOTION
    ========================================================================== */
 .toast-container {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 24px;
+    right: 24px;
     z-index: 5000;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 .toast {
     background: var(--white);
-    border-left: 5px solid var(--emerald-light);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    padding: 16px 24px;
+    border-left: 4px solid var(--emerald-light);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    padding: 14px 20px;
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    min-width: 300px;
+    gap: 10px;
+    animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.2);
 }
 .toast i {
     color: var(--emerald-light);
-    font-size: 18px;
+    font-size: 16px;
 }
 .toast-text {
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
 }
 
-/* ==========================================================================
-   BACK TO TOP & MICROMOTION KEYFRAMES
-   ========================================================================== */
+/* Back To Top Action Configuration */
 .back-to-top {
     position: fixed;
-    bottom: 30px;
-    left: 30px;
-    width: 46px;
-    height: 46px;
+    bottom: 24px;
+    left: 24px;
+    width: 42px;
+    height: 42px;
     background: var(--primary-gradient);
     color: white;
     border: none;
@@ -779,10 +803,10 @@ label {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px);
+    transform: translateY(15px);
     transition: var(--transition-smooth);
     z-index: 500;
 }
@@ -792,21 +816,21 @@ label {
     transform: translateY(0);
 }
 
-/* ANIMATION KEYFRAMES */
+/* KEYFRAMES CORE ENGINE ANIMATIONS */
 @keyframes slideUp {
-    from { transform: translateY(12px); opacity: 0; }
+    from { transform: translateY(8px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
 @keyframes toastIn {
-    from { transform: translateX(50px); opacity: 0; }
+    from { transform: translateX(40px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* Scroll Reveal Initial Class via JS loop */
+/* Fade In Scroll Reveal Classes */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
 }
 .scroll-reveal.revealed {
     opacity: 1;
@@ -814,53 +838,58 @@ label {
 }
 
 /* ==========================================================================
-   FOOTER STYLE
+   FOOTER INTERFACES
    ========================================================================== */
 .main-footer {
     text-align: center;
-    padding: 30px 20px;
+    padding: 24px 16px;
     background: var(--glass-bg);
     border-top: 1px solid var(--glass-border);
-    margin-top: 60px;
-    font-size: 13px;
+    margin-top: 40px;
+    font-size: 12.5px;
     color: var(--gray-muted);
 }
 .tech-stack {
-    margin-top: 8px;
+    margin-top: 6px;
 }
 .ts-badge {
     background: var(--gray-mid);
-    padding: 2px 6px;
+    padding: 1px 5px;
     border-radius: 4px;
     font-weight: 600;
-    font-size: 11px;
+    font-size: 10.5px;
 }
 
 /* ==========================================================================
-   RESPONSIVE MEDIA QUERIES (320px s.d. Desktop 4K)
+   RESPONSIVE LAYOUT ENGINE VIEWS (Desktop 4K down to Smartphone 320px)
    ========================================================================== */
-@media (max-width: 992px) {
-    .form-grid { gap: 16px; }
-    .form-group { grid-column: span 6; }
-    .form-group.mini { grid-column: span 3; }
+@media (max-width: 1150px) {
+    .main-form-grid {
+        grid-template-columns: 1fr; /* Stack dual column down to single cascade column */
+        gap: 0;
+    }
 }
 
 @media (max-width: 768px) {
-    .main-content { margin: 20px auto; }
+    .main-content { margin: 20px auto; padding: 0 16px; }
     .form-card { padding: 20px; border-radius: 18px; }
-    .form-group { grid-column: span 12; }
-    .form-group.medium { grid-column: span 12; }
-    .form-group.mini { grid-column: span 4; }
-    .upload-grid { grid-template-columns: 1fr; }
-    .header-container { padding: 12px 16px; }
-    .title-wrapper h1 { font-size: 16px; }
-    .title-wrapper p { font-size: 12px; }
+    
+    /* Force 12-column items inside subgrid to collapse cleanly into single row item lists */
+    .form-grid > [class*="span-"] {
+        grid-column: span 12 !important;
+    }
+    /* Retain RT & RW side by side spacing configuration layout */
+    .form-grid .span-3 {
+        grid-column: span 6 !important;
+    }
+    
     .form-actions { flex-direction: column-reverse; }
     .btn { width: 100%; justify-content: center; }
+    .header-container { padding: 10px 16px; }
+    .title-wrapper h1 { font-size: 15px; }
 }
 
-@media (min-width: 2560px) { /* 4K Screen Enhancements */
-    .main-content { max-width: 1400px; }
-    .form-grid { gap: 30px; }
-    font-size: 16px;
+@media (min-width: 2560px) {
+    .main-content { max-width: 1500px; }
+    body { font-size: 15px; }
 }
