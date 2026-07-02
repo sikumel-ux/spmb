@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KOPITALIS - Form PWA</title>
+    <title>SPMB TUNAS MELATI</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Meta tag pendukung PWA (Bisa disesuaikan nanti dengan manifest.json) -->
+    <!-- Meta tag pendukung PWA -->
     <meta name="theme-color" content="#1A1714">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -135,74 +135,13 @@
                 </div>
             </div>
 
-            <!-- BAGIAN 4: BERKAS FISIK & UPLOAD -->
-            <div class="form-card">
-                <div class="card-header">
-                    <div class="card-icon">04</div>
-                    <h2>Kelengkapan Berkas (PWA Upload)</h2>
-                </div>
-                
-                <!-- Checkbox Dokumen Fisik -->
-                <div class="checkbox-container">
-                    <label class="section-sub-label">Ceklis Dokumen Fisik yang Diserahkan:</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="berkas" value="KK">
-                            <span>KK</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="berkas" value="Akta">
-                            <span>Akta</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="berkas" value="KTP">
-                            <span>KTP Ot</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="berkas" value="Ijazah">
-                            <span>Ijazah</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="berkas" value="KIA">
-                            <span>KIA</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="berkas" value="KPS">
-                            <span>KPS/KIP</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Kamera / File Upload Row -->
-                <div class="upload-row">
-                    <div class="form-group span-12">
-                        <label>Upload Berkas / Foto Langsung via HP</label>
-                        <div class="compact-upload-box">
-                            <label class="btn-upload-trigger">
-                                <input type="file" accept="image/*" id="fileBerkas" capture="environment">
-                                <span>Ambil Foto / Berkas</span>
-                            </label>
-                            <span class="file-name-preview" id="fileName">Belum ada file terpilih</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- TOMBOL AKSI -->
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="document.getElementById('pwaForm').reset()">Reset Form</button>
-                <button type="submit" class="btn btn-primary">Simpan Data (Kirim)</button>
+                <button type="submit" class="btn btn-primary">Simpan Data</button>
             </div>
 
         </form>
     </main>
-
-    <script>
-        // Preview nama file ketika user upload lewat kamera/galeri HP
-        document.getElementById('fileBerkas').addEventListener('change', function(e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'Belum ada file terpilih';
-            document.getElementById('fileName').textContent = fileName;
-        });
-    </script>
 </body>
 </html>
