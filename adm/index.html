@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Administrator - SPMB</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-box { max-width: 400px; margin: 100px auto; padding: 40px; text-align: center; }
+        .logo { width: 80px; height: 80px; margin-bottom: 20px; }
+    </style>
+</head>
+<body style="background: #f5f6fa;">
+    <div class="glass-card login-box">
+        <img src="assets/lingkaran.png" class="logo" alt="Logo">
+        <h3 style="margin-bottom: 20px;">Gatekeeper Admin SPMB</h3>
+        <form id="loginForm">
+            <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                <label>Email Admin</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Masuk Dashboard</button>
+        </form>
+    </div>
+    <script type="module" src="login.js"></script>
+</body>
+</html>
