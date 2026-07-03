@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - SPS Tunas Melati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <button id="menuMobileToggle" class="mobile-menu-btn">☰</button>
+
+    <div class="admin-wrapper">
+        <aside class="sidebar" id="adminSidebar">
+            <div class="brand">
+                <img src="assets/lingkaran.png" alt="Logo">
+                <div><h4>SPMB Admin</h4><small>SPS Tunas Melati</small></div>
+            </div>
+            <nav class="menu">
+                <a href="#" class="menu-item active">🏠 Dashboard</a>
+                <a href="#">编 Data Murid</a>
+                <a href="#">🔍 Pencarian</a>
+                <a href="#">📊 Statistik</a>
+                <a href="#">⚙️ Pengaturan</a>
+                <button id="btnLogout" class="logout-btn">🚪 Keluar Panel</button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2>Ringkasan Berkas Masuk</h2>
+                    <p style="font-size: 0.85rem; color: #64748b;">Administrasi Realtime</p>
+                </div>
+                <div class="admin-profile"><div class="avatar">A</div><span id="adminUserEmail">...</span></div>
+            </header>
+
+            <div class="metrics-grid">
+                <div class="metric-card"><div class="card-decor"></div><h3>Hari Ini</h3><div class="value" id="statHariIni">0</div></div>
+                <div class="metric-card"><div class="card-decor"></div><h3>Minggu Ini</h3><div class="value" id="statMingguIni">0</div></div>
+                <div class="metric-card focus"><h3>Total Terdata</h3><div class="value" id="statTotal">0</div></div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header-tools">
+                    <input type="text" id="tableSearch" placeholder="Cari pendaftar (Nama / NIK)...">
+                </div>
+                <div class="table-responsive-scroll">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>No. Pendaftaran</th>
+                                <th>Nama Anak</th>
+                                <th>NIK</th>
+                                <th>Nama Ayah</th>
+                                <th>Nama Ibu</th>
+                                <th>Status</th>
+                                <th style="text-align:center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="detailModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Detail Lengkap Data Pendaftar</h3>
+                <button id="closeModal" class="close-modal-btn">&times;</button>
+            </div>
+            <div id="detailModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
