@@ -80,6 +80,7 @@ body {
     align-items: center;
     cursor: pointer;
     user-select: none;
+    padding: 5px 0;
 }
 
 .card-title { 
@@ -96,24 +97,25 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* Mengatur default konten tersembunyi */
+/* KONDISI DEFAULT: Sembunyikan isi form */
 .card-content {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    display: none; 
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
 }
 
-/* KETIKA AKTIF: Tampilkan konten form */
+/* KONDISI AKTIF: Tampilkan isi form secara mutlak */
 .glass-card.active .card-content {
-    display: block;
-    opacity: 1;
+    display: block !important; 
     margin-top: 25px;
     border-top: 2px dashed var(--primary-kuning);
     padding-top: 25px;
 }
 
+/* Efek rotasi panah saat aktif */
 .glass-card.active .icon-arrow {
-    transform: rotate(180deg); /* Panah berbalik ke atas */
+    transform: rotate(180deg);
     color: var(--primary-kuning);
 }
 
