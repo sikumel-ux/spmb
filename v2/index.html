@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penerimaan Murid Baru - SPS Tunas Melati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="hero-header">
+        <div class="blur-circle circle-1"></div>
+        <div class="blur-circle circle-2"></div>
+        
+        <div class="logo-box">
+            <img src="assets/lingkaran.png" alt="Logo SPS Tunas Melati">
+        </div>
+        
+        <div class="header-text">
+            <h1>SISTEM PENERIMAAN MURID BARU</h1>
+            <h2>SPS "TUNAS MELATI"</h2>
+            <p>Jl. Yowo Yuwoo No. 15 Yogyakarta</p>
+        </div>
+
+        <div class="wave-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <path fill="#f7f9fa" fill-opacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,186.7C960,192,1056,160,1152,144C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display:flex; justify-content: flex-end; margin-bottom: 15px;">
+            <button id="themeToggle" class="btn-primary" style="padding:8px 15px; font-size:0.8rem;">Dark Mode</button>
+        </div>
+
+        <div class="progress-container">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:5px; font-weight:600;">
+                <span>Progres Pengisian Formulir</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBarFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <form id="spmbForm">
+            <section class="glass-card">
+                <div class="card-title">I. Identitas Calon Peserta Didik</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="namaAnak" required></div>
+                    <div class="form-group"><label>Nama Panggilan</label><input type="text" id="namaPanggilan"></div>
+                    <div class="form-group"><label>NIK (Sesuai KIA/KK) *</label><input type="text" id="nikAnak" maxlength="16" required></div>
+                    <div class="form-group"><label>Nomor Kartu Keluarga *</label><input type="text" id="noKk" maxlength="16" required></div>
+                    <div class="form-group"><label>Tempat Lahir *</label><input type="text" id="tempatLahir" required></div>
+                    <div class="form-group"><label>Tanggal Lahir *</label><input type="date" id="tanggalLahir" required></div>
+                    <div class="form-group">
+                        <label>Jenis Kelamin *</label>
+                        <select id="jenisKelamin" required>
+                            <option value="">-- Pilih --</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Agama *</label>
+                        <select id="agamaAnak" required>
+                            <option value="Islam">Islam</option><option value="Kristen">Kristen</option>
+                            <option value="Katolik">Katolik</option><option value="Hindu">Hindu</option>
+                            <option value="Buddha">Buddha</option><option value="Khonghucu">Khonghucu</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Kewarganegaraan</label><input type="text" id="wargaAnak" value="WNI"></div>
+                    <div class="form-group"><label>Anak Ke-</label><input type="number" id="anakKe" min="1"></div>
+                    <div class="form-group"><label>Jumlah Saudara</label><input type="number" id="jumlahSaudara" min="0"></div>
+                    <div class="form-group"><label>Status Dalam Keluarga</label><input type="text" id="statusKeluarga" placeholder="Anak Kandung/Adopsi"></div>
+                    
+                    <div class="form-group full-width"><label>Alamat Lengkap *</label><textarea id="alamat" rows="2" required></textarea></div>
+                    <div class="form-group"><label>RT</label><input type="text" id="rt"></div>
+                    <div class="form-group"><label>RW</label><input type="text" id="rw"></div>
+                    <div class="form-group"><label>Desa/Kelurahan</label><input type="text" id="desa"></div>
+                    <div class="form-group"><label>Kecamatan</label><input type="text" id="kecamatan"></div>
+                    <div class="form-group"><label>Kabupaten/Kota</label><input type="text" id="kabupaten" value="Yogyakarta"></div>
+                    <div class="form-group"><label>Provinsi</label><input type="text" id="provinsi" value="DI Yogyakarta"></div>
+                    <div class="form-group"><label>Kode Pos</label><input type="text" id="kodePos"></div>
+                    
+                    <div class="form-group">
+                        <label>Golongan Darah</label>
+                        <select id="golDarah">
+                            <option value="-">-</option><option value="A">A</option>
+                            <option value="B">B</option><option value="AB">AB</option><option value="O">O</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Riwayat Imunisasi</label><input type="text" id="imunisasi" placeholder="BCG, DPT, Polio, dll"></div>
+                    <div class="form-group"><label>Kondisi Kesehatan khusus</label><input type="text" id="kondisiKesehatan"></div>
+                    <div class="form-group"><label>Alergi</label><input type="text" id="alergi"></div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <div class="card-title">II. Identitas Ayah Kandung</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nama Ayah *</label><input type="text" id="namaAyah" required></div>
+                    <div class="form-group"><label>NIK Ayah</label><input type="text" id="nikAyah" maxlength="16"></div>
+                    <div class="form-group"><label>Tempat, Tanggal Lahir</label><input type="text" id="ttlAyah"></div>
+                    <div class="form-group"><label>Agama</label><input type="text" id="agamaAyah" value="Islam"></div>
+                    <div class="form-group"><label>Pendidikan Terakhir</label><input type="text" id="pendidikanAyah"></div>
+                    <div class="form-group"><label>Pekerjaan</label><input type="text" id="pekerjaanAyah"></div>
+                    <div class="form-group"><label>Penghasilan Bulanan</label><input type="text" id="gajiAyah"></div>
+                    <div class="form-group"><label>Nomor HP/WhatsApp *</label><input type="tel" id="hpAyah" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="emailAyah"></div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <div class="card-title">III. Identitas Ibu Kandung</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nama Ibu *</label><input type="text" id="namaIbu" required></div>
+                    <div class="form-group"><label>NIK Ibu</label><input type="text" id="nikIbu" maxlength="16"></div>
+                    <div class="form-group"><label>Tempat, Tanggal Lahir</label><input type="text" id="ttlIbu"></div>
+                    <div class="form-group"><label>Agama</label><input type="text" id="agamaIbu" value="Islam"></div>
+                    <div class="form-group"><label>Pendidikan Terakhir</label><input type="text" id="pendidikanIbu"></div>
+                    <div class="form-group"><label>Pekerjaan</label><input type="text" id="pekerjaanIbu"></div>
+                    <div class="form-group"><label>Penghasilan Bulanan</label><input type="text" id="gajiIbu"></div>
+                    <div class="form-group"><label>Nomor HP/WhatsApp *</label><input type="tel" id="hpIbu" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="emailIbu"></div>
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <div class="card-title">IV. Kontak Darurat (Selain Orang Tua)</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Nama Kontak *</label><input type="text" id="namaDarurat" required></div>
+                    <div class="form-group"><label>Hubungan Keluarga *</label><input type="text" id="hubunganDarurat" placeholder="Kakek/Paman/Bibi" required></div>
+                    <div class="form-group"><label>Nomor HP *</label><input type="tel" id="hpDarurat" required></div>
+                    <div class="form-group full-width"><label>Alamat</label><textarea id="alamatDarurat" rows="2"></textarea></div>
+                </div>
+            </section>
+
+            <div style="display: flex; gap: 15px; justify-content: flex-end; margin-bottom: 5px;">
+                <button type="button" id="btnPreview" class="btn-primary" style="background: #718093;">Preview Data</button>
+                <button type="submit" class="btn-primary">Kirim Pendaftaran</button>
+            </div>
+        </form>
+    </main>
+
+    <div id="previewModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+        <div class="glass-card" style="width:90%; max-width:700px; max-height:85vh; overflow-y:auto; background:#fff;">
+            <h3 class="card-title">Preview Berkas Pendaftaran</h3>
+            <div id="previewContent" style="font-size:0.9rem; line-height:1.6;"></div>
+            <div style="text-align:right; margin-top:20px;">
+                <button id="closePreview" class="btn-primary" style="background:#718093;">Tutup</button>
+                <button id="btnPrintForm" class="btn-primary">Cetak Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="backToTop">↑</button>
+    <div id="toast" class="toast"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
