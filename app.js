@@ -1,4 +1,3 @@
-// app.js
 import { db, generateNomorPendaftaran } from "./firebase.js";
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -10,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.getElementById("toast");
     const backToTop = document.getElementById("backToTop");
 
+    // Realtime Progress Tracker Formulir
     function updateProgress() {
         const requiredInputs = Array.from(inputs).filter(i => i.hasAttribute('required'));
         const filledRequired = requiredInputs.filter(i => i.value.trim() !== "").length;
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Load Data Draft jika Halaman Ter-refresh Sengaja/Tidak Sengaja
     function loadDraft() {
         inputs.forEach(input => {
             const saved = localStorage.getItem(`draft_${input.id}`);
@@ -40,29 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.classList.remove("show"), 4000);
     }
 
-    document.getElementById("themeToggle").addEventListener("click", () => {
-        const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", theme);
-    });
-
+    // Scroll To Top Logic
     window.addEventListener("scroll", () => {
         if (window.scrollY > 300) backToTop.classList.add("show");
         else backToTop.classList.remove("show");
     });
     backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    // PREVIEW SYSTEM
+    // PREVIEW FORMULIR MANAGEMENT
     document.getElementById("btnPreview").addEventListener("click", () => {
         const content = `
-            <strong>I. DATA ANAK:</strong><br>
-            Nama: ${document.getElementById("namaAnak").value || '-'}<br>
+            <strong style="color:#4CAF50;">I. DATA CALON SISWA:</strong><br>
+            Nama Lengkap: ${document.getElementById("namaAnak").value || '-'}<br>
             NIK: ${document.getElementById("nikAnak").value || '-'}<br>
-            TTL: ${document.getElementById("tempatLahir").value || '-'}, ${document.getElementById("tanggalLahir").value || '-'}<br>
-            Alamat: ${document.getElementById("alamat").value || '-'}<br><br>
-            <strong>II. ORANG TUA & KONTAK:</strong><br>
-            Ayah: ${document.getElementById("namaAyah").value || '-'} (${document.getElementById("hpAyah").value || '-'})<br>
-            Ibu: ${document.getElementById("namaIbu").value || '-'} (${document.getElementById("hpIbu").value || '-'})<br>
-            Kontak Darurat: ${document.getElementById("namaDarurat").value || '-'} - ${document.getElementById("hpDarurat").value || '-'}
+            Tempat, Tanggal Lahir: ${document.getElementById("tempatLahir").value || '-'}, ${document.getElementById("tanggalLahir").value || '-'}<br>
+            Alamat Tinggal: ${document.getElementById("alamat").value || '-'}<br><br>
+            <strong style="color:#4CAF50;">II. ORANG TUA / WALI:</strong><br>
+            Nama Ayah: ${document.getElementById("namaAyah").value || '-'} (${document.getElementById("hpAyah").value || '-'})<br>
+            Nama Ibu: ${document.getElementById("namaIbu").value || '-'} (${document.getElementById("hpIbu").value || '-'})<br><br>
+            <strong style="color:#4CAF50;">III. KONTAK EMERGENSI:</strong><br>
+            Kontak Darurat: ${document.getElementById("namaDarurat").value || '-'} (${document.getElementById("hpDarurat").value || '-'})
         `;
         document.getElementById("previewContent").innerHTML = content;
         document.getElementById("previewModal").style.display = "flex";
@@ -74,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("btnPrintForm").addEventListener("click", () => window.print());
 
-    // DATABASE WRITE
+    // ACTION INTEGRASI DATABASE FIRESTORE
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         try {
@@ -142,13 +140,15 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             await addDoc(collection(db, "pendaftaran"), payload);
-            alert(`Pendaftaran Sukses! Simpan Nomor Anda: ${regNo}`);
+            alert(`Pendaftaran Berhasil Terkirim!\nNomor Registrasi: ${regNo}`);
+            
+            // Wipe Out Local Cache Draft
             inputs.forEach(i => localStorage.removeItem(`draft_${i.id}`));
             form.reset();
             updateProgress();
         } catch (err) {
             console.error(err);
-            showToast("Sistem sibuk. Gagal mengirim data.");
+            showToast("Akses Cloud Terputus. Gagal menyimpan.");
         }
     });
 });
