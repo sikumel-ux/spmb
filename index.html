@@ -7,212 +7,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: #F1F5F9;
-            color: #1E293B;
-            padding: 20px 10px;
-        }
-        .form-container {
-            max-width: 650px;
-            background: #FFFFFF;
-            margin: 0 auto;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            padding: 30px 25px;
-            border: 1px solid #E2E8F0;
-        }
-        .form-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .form-header h1 {
-            font-size: 1.6rem;
-            color: #0F172A;
-            font-weight: 800;
-        }
-        .form-header p {
-            font-size: 0.9rem;
-            color: #64748B;
-            margin-top: 4px;
-        }
-        
-        /* Progress Bar Tracker */
-        .progress-wrapper {
-            background: #E2E8F0;
-            border-radius: 50px;
-            height: 12px;
-            margin-bottom: 30px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-bar {
-            background: linear-gradient(90deg, #1CB5E8 0%, #73C045 100%);
-            width: 0%;
-            height: 100%;
-            transition: width 0.4s ease;
-        }
-        .progress-status {
-            text-align: right;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #475569;
-            margin-top: -24px;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #0F172A;
-            border-left: 4px solid #73C045;
-            padding-left: 10px;
-            margin: 25px 0 15px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group.row-flex {
-            display: flex;
-            gap: 12px;
-        }
-        .form-group.row-flex > div {
-            flex: 1;
-        }
-        label {
-            display: block;
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: #334155;
-            margin-bottom: 6px;
-        }
-        input[type="text"], input[type="date"], input[type="number"], select, textarea {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1.5px solid #CBD5E1;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 0.92rem;
-            color: #1E293B;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #1CB5E8;
-        }
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            padding: 8px 0;
-        }
-        .radio-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .btn-submit {
-            background: #73C045;
-            color: #FFFFFF;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 25px;
-            transition: background 0.2s;
-            box-shadow: 0 4px 12px rgba(115, 192, 69, 0.2);
-        }
-        .btn-submit:hover { background: #63a73a; }
-        .btn-submit:disabled { background: #94A3B8; cursor: not-allowed; box-shadow: none; }
-
-        /* CUSTOM MODAL ALERT STYLE */
-        .custom-alert-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .custom-alert-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .custom-alert-box {
-            background: #FFFFFF;
-            width: 90%;
-            max-width: 420px;
-            padding: 30px 25px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .custom-alert-overlay.active .custom-alert-box {
-            transform: scale(1);
-        }
-        .alert-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        .alert-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #0F172A;
-            margin-bottom: 10px;
-        }
-        .alert-message {
-            font-size: 0.92rem;
-            color: #64748B;
-            line-height: 1.5;
-            margin-bottom: 25px;
-        }
-        .btn-alert-close {
-            background: #1CB5E8;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 10px;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-alert-close:hover { background: #159ecb; }
-        .btn-alert-close.btn-success-theme { background: #73C045; }
-        .btn-alert-close.btn-success-theme:hover { background: #63a73a; }
-    </style>
+    <!-- PEMANGGILAN CSS BARU -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="form-container">
-        <div class="form-header">
-            <h1>SPS Tunas Melati</h1>
-            <p>Formulir Pendaftaran Murid Baru TA 2026/2027 • Dongkelan RT 04</p>
-        </div>
+    <div class="header-banner">
+        <img src="logo.png" alt="Logo SPS Tunas Melati" class="header-logo" onerror="this.style.display='none'">
+        <h1>SPS Tunas Melati</h1>
+        <p>Formulir Pendaftaran Murid Baru TA 2026/2027 • Dongkelan RT 04</p>
+    </div>
 
+    <div class="form-container">
         <div class="progress-wrapper">
             <div id="progressBar" class="progress-bar"></div>
         </div>
         <div id="percentText" class="progress-status">0%</div>
 
         <form id="mainPendaftaranForm">
-            
             <div class="section-title">A. Data Calon Siswa</div>
             
             <div class="form-group">
@@ -293,7 +105,7 @@
 
             <div class="form-group">
                 <label>Alamat Jalan/Kampung *</label>
-                <textarea id="p_alamat" class="track-field" required rows="2" placeholder="Nama Jalan, Dusun, atau Dusun RT/RW"></textarea>
+                <textarea id="p_alamat" class="track-field" required rows="2" placeholder="Nama Jalan, Kampung, RT/RW"></textarea>
             </div>
 
             <div class="form-group row-flex">
@@ -325,9 +137,8 @@
 
             <div class="form-group">
                 <label>Riwayat Imunisasi Anak</label>
-                <input type="text" id="p_imunisasi" class="track-field" placeholder="Misal: BCG, Polio, DPT, Campak (kosongkan jika lupa)">
+                <input type="text" id="p_imunisasi" class="track-field" placeholder="Misal: BCG, Polio, DPT, Campak">
             </div>
-
 
             <div class="section-title">B. Data Orang Tua / Wali</div>
             
@@ -349,7 +160,7 @@
                 </div>
                 <div>
                     <label>Pekerjaan Ayah *</label>
-                    <input type="text" id="a_pekerjaan" class="track-field" required placeholder="Swasta, PNS, Buruh, dll">
+                    <input type="text" id="a_pekerjaan" class="track-field" required placeholder="Swasta, Buruh, dll">
                 </div>
             </div>
 
@@ -381,7 +192,7 @@
                 </div>
                 <div>
                     <label>Pekerjaan Ibu *</label>
-                    <input type="text" id="i_pejaan" class="track-field" required placeholder="IRT, Swasta, Guru, dll">
+                    <input type="text" id="i_pejaan" class="track-field" required placeholder="IRT, Swasta, dll">
                 </div>
             </div>
 
