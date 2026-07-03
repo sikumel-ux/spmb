@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Kunci Konfigurasi Firebase Resmi Milikmu
+// 🔑 Konfigurasi Firebase Resmi Milikmu (Project: tnsmelatidkl)
 const firebaseConfig = {
   apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
   authDomain: "tnsmelatidkl.firebaseapp.com",
@@ -15,12 +15,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Fungsi Generate Manual Nomor Pendaftaran Unik
+// 🎲 Fungsi Pembuat Nomor Pendaftaran Unik Otomatis
 function generateNomorPendaftaran() {
     const date = new Date();
-    const tahun = date.getFullYear().toString().substring(2);
-    const bulan = String(date.getMonth() + 1).padStart(2, '0');
-    const randomHex = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    const tahun = date.getFullYear().toString().substring(2); // Ambil 2 angka belakang (cth: 26)
+    const bulan = String(date.getMonth() + 1).padStart(2, '0'); // Ambil bulan (01-12)
+    const randomHex = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); // 4 angka acak
     return `SPMB-${tahun}${bulan}-${randomHex}`;
 }
 
@@ -31,19 +31,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnSubmit = document.getElementById("btnSubmit");
     const backToTop = document.getElementById("backToTop");
 
-    // Load data draft otomatis jika ada data tersimpan
+    // 💾 SISTEM AUTO-SAVE DRAFT (Local Storage)
     inputs.forEach(input => {
         if (input.id) {
+            // Muat data jika sebelumnya sudah pernah mengetik tapi ter-refresh
             const saved = localStorage.getItem(`draft_${input.id}`);
             if (saved) input.value = saved;
             
+            // Simpan setiap kali ada perubahan ketikan
             input.addEventListener("input", () => {
                 localStorage.setItem(`draft_${input.id}`, input.value);
             });
         }
     });
 
-    // Fungsi trigger Notifikasi Pintar (Sukses / Gagal)
+    // 📢 Fungsi Memunculkan Notifikasi Toast (Sukses / Gagal)
     function triggerNotification(message, type = "success") {
         if (!toast) return;
         toast.innerText = message;
@@ -51,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.classList.remove("show"), 4000);
     }
 
-    // Scroll To Top Controller
+    // 🔝 Tombol Scroll To Top Kontroler
     window.addEventListener("scroll", () => {
         if (backToTop) {
             if (window.scrollY > 300) backToTop.classList.add("show");
@@ -62,16 +64,18 @@ document.addEventListener("DOMContentLoaded", () => {
         backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
 
-    // HANDLER KIRIM DATA KE FIREBASE
+    // 🚀 PROSES KIRIM DATA (SUBMIT FORM TO FIREBASE)
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         
-        // Ubah tombol jadi status loading proteksi klik ganda
+        // Kunci tombol agar tidak di-klik ganda oleh pendaftar
         btnSubmit.disabled = true;
         btnSubmit.innerText = "Memproses...";
 
         try {
             const regNo = generateNomorPendaftaran();
+            
+            // Bungkus seluruh data formulir ke dalam satu paket (Payload)
             const payload = {
                 nomorPendaftaran: regNo,
                 status: "Pending",
@@ -134,29 +138,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             };
 
-            // Kirim Dokumen ke Koleksi 'pendaftaran' di Firestore milikmu
+            // Tembak data langsung ke Cloud Firestore ke dalam koleksi bernama 'pendaftaran'
             await addDoc(collection(db, "pendaftaran"), payload);
             
-            // Simpan nomor pendaftaran sementara di sessionStorage untuk dibaca halaman Terimakasih
+            // Simpan nomor pendaftaran sementara di memori browser agar bisa dibaca halaman Terimakasih
             sessionStorage.setItem("latestRegNo", regNo);
 
-            // Munculkan Notif Sukses Hijau
+            // Munculkan notifikasi sukses (Toast hijau di kanan atas)
             triggerNotification("Berkas Pendaftaran Berhasil Terkirim ke Cloud!", "success");
 
-            // Hapus cache ketikan local draft
+            // Bersihkan seluruh data draft ketikan di local storage karena data sudah aman terkirim
             inputs.forEach(i => { if (i.id) localStorage.removeItem(`draft_${i.id}`); });
             form.reset();
 
-            // Beri jeda 2 detik untuk mata membaca notif, lalu bawa ke halaman Terimakasih
+            // Beri jeda 2 detik (2000 ms) agar pendaftar sempat melihat notifikasi sukses, lalu lempar ke halaman Terimakasih
             setTimeout(() => {
                 window.location.href = "terimakasih.html";
             }, 2000);
 
         } catch (err) {
+            // LOG ERROR KE CONSOLE BROWSER (F12)
             console.error("Firebase Database Error: ", err);
-            triggerNotification("Akses Cloud Gagal! Cek koneksi internet Anda.", "error");
             
-            // Kembalikan tombol ke sedia kala agar user bisa coba kirim ulang
+            // 🚨 POPUP DIAGNOSIS OTOMATIS: Menampilkan detail eror sesungguhnya di layar browser
+            alert("Gagal Kirim Data! Alasan Sistem:\n" + err.message);
+            triggerNotification("Gagal menyimpan data: " + err.message, "error");
+            
+            // Kembalikan tombol ke keadaan semula agar pendaftar bisa mencoba klik kirim lagi
             btnSubmit.disabled = false;
             btnSubmit.innerText = "Kirim Berkas";
         }
