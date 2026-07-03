@@ -3,74 +3,113 @@ import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/fir
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("spmbForm");
+    // Mengambil semua elemen input, select, dan textarea di dalam form
     const inputs = form.querySelectorAll("input, select, textarea");
     const progressBarFill = document.getElementById("progressBarFill");
     const progressText = document.getElementById("progressText");
     const toast = document.getElementById("toast");
     const backToTop = document.getElementById("backToTop");
 
-    // Realtime Progress Tracker Formulir
+    // Fungsi Utama Tracker Progress Formulir
     function updateProgress() {
+        // Memfilter hanya inputan yang memiliki atribut 'required' (wajib diisi)
         const requiredInputs = Array.from(inputs).filter(i => i.hasAttribute('required'));
+        
+        // Menghitung berapa input wajib yang sudah diisi (tidak kosong)
         const filledRequired = requiredInputs.filter(i => i.value.trim() !== "").length;
-        const percentage = Math.round((filledRequired / requiredInputs.length) * 100);
-        progressBarFill.style.width = `${percentage}%`;
-        progressText.innerText = `${percentage}%`;
+        
+        // Kalkulasi persentase pembulatan
+        const percentage = requiredInputs.length > 0 ? Math.round((filledRequired / requiredInputs.length) * 100) : 0;
+        
+        // Update tampilan DOM CSS & Teks Angka
+        if (progressBarFill && progressText) {
+            progressBarFill.style.width = `${percentage}%`;
+            progressText.innerText = `${percentage}%`;
+        }
     }
 
+    // Pasang event listener ke setiap elemen form agar realtime saat diketik/dipilih
     inputs.forEach(input => {
+        // Trigger jalan setiap kali user mengetik atau memilih opsi select
         input.addEventListener("input", () => {
             updateProgress();
-            localStorage.setItem(`draft_${input.id}`, input.value);
+            if (input.id) {
+                localStorage.setItem(`draft_${input.id}`, input.value);
+            }
+        });
+        
+        // Tambahan handle untuk tipe 'change' khusus element select/date select box
+        input.addEventListener("change", () => {
+            updateProgress();
         });
     });
 
     // Load Data Draft jika Halaman Ter-refresh Sengaja/Tidak Sengaja
     function loadDraft() {
         inputs.forEach(input => {
-            const saved = localStorage.getItem(`draft_${input.id}`);
-            if (saved) input.value = saved;
+            if (input.id) {
+                const saved = localStorage.getItem(`draft_${input.id}`);
+                if (saved) input.value = saved;
+            }
         });
+        // Jalankan kalkulasi pertama kali saat halaman selesai dimuat
         updateProgress();
     }
+    
+    // Eksekusi fungsi load draft di awal
     loadDraft();
 
     function showToast(msg) {
-        toast.innerText = msg;
-        toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 4000);
+        if (toast) {
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 4000);
+        }
     }
 
     // Scroll To Top Logic
     window.addEventListener("scroll", () => {
-        if (window.scrollY > 300) backToTop.classList.add("show");
-        else backToTop.classList.remove("show");
+        if (backToTop) {
+            if (window.scrollY > 300) backToTop.classList.add("show");
+            else backToTop.classList.remove("show");
+        }
     });
-    backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    
+    if (backToTop) {
+        backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
 
     // PREVIEW FORMULIR MANAGEMENT
-    document.getElementById("btnPreview").addEventListener("click", () => {
-        const content = `
-            <strong style="color:#4CAF50;">I. DATA CALON SISWA:</strong><br>
-            Nama Lengkap: ${document.getElementById("namaAnak").value || '-'}<br>
-            NIK: ${document.getElementById("nikAnak").value || '-'}<br>
-            Tempat, Tanggal Lahir: ${document.getElementById("tempatLahir").value || '-'}, ${document.getElementById("tanggalLahir").value || '-'}<br>
-            Alamat Tinggal: ${document.getElementById("alamat").value || '-'}<br><br>
-            <strong style="color:#4CAF50;">II. ORANG TUA / WALI:</strong><br>
-            Nama Ayah: ${document.getElementById("namaAyah").value || '-'} (${document.getElementById("hpAyah").value || '-'})<br>
-            Nama Ibu: ${document.getElementById("namaIbu").value || '-'} (${document.getElementById("hpIbu").value || '-'})<br><br>
-            <strong style="color:#4CAF50;">III. KONTAK EMERGENSI:</strong><br>
-            Kontak Darurat: ${document.getElementById("namaDarurat").value || '-'} (${document.getElementById("hpDarurat").value || '-'})
-        `;
-        document.getElementById("previewContent").innerHTML = content;
-        document.getElementById("previewModal").style.display = "flex";
+    const btnPreview = document.getElementById("btnPreview");
+    if (btnPreview) {
+        btnPreview.addEventListener("click", () => {
+            const content = `
+                <strong style="color:#4CAF50;">I. DATA CALON SISWA:</strong><br>
+                Nama Lengkap: ${document.getElementById("namaAnak")?.value || '-'}<br>
+                NIK: ${document.getElementById("nikAnak")?.value || '-'}<br>
+                Tempat, Tanggal Lahir: ${document.getElementById("tempatLahir")?.value || '-'}, ${document.getElementById("tanggalLahir")?.value || '-'}<br>
+                Alamat Tinggal: ${document.getElementById("alamat")?.value || '-'}<br><br>
+                <strong style="color:#4CAF50;">II. ORANG TUA / WALI:</strong><br>
+                Nama Ayah: ${document.getElementById("namaAyah")?.value || '-'} (${document.getElementById("hpAyah")?.value || '-'})<br>
+                Nama Ibu: ${document.getElementById("namaIbu")?.value || '-'} (${document.getElementById("hpIbu")?.value || '-'})<br><br>
+                <strong style="color:#4CAF50;">III. KONTAK EMERGENSI:</strong><br>
+                Kontak Darurat: ${document.getElementById("namaDarurat")?.value || '-'} (${document.getElementById("hpDarurat")?.value || '-'})
+            `;
+            const previewContent = document.getElementById("previewContent");
+            const previewModal = document.getElementById("previewModal");
+            if (previewContent && previewModal) {
+                previewContent.innerHTML = content;
+                previewModal.style.display = "flex";
+            }
+        });
+    }
+
+    document.getElementById("closePreview")?.addEventListener("click", () => {
+        const previewModal = document.getElementById("previewModal");
+        if (previewModal) previewModal.style.display = "none";
     });
 
-    document.getElementById("closePreview").addEventListener("click", () => {
-        document.getElementById("previewModal").style.display = "none";
-    });
-
-    document.getElementById("btnPrintForm").addEventListener("click", () => window.print());
+    document.getElementById("btnPrintForm")?.addEventListener("click", () => window.print());
 
     // ACTION INTEGRASI DATABASE FIRESTORE
     form.addEventListener("submit", async (e) => {
@@ -143,7 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(`Pendaftaran Berhasil Terkirim!\nNomor Registrasi: ${regNo}`);
             
             // Wipe Out Local Cache Draft
-            inputs.forEach(i => localStorage.removeItem(`draft_${i.id}`));
+            inputs.forEach(i => {
+                if (i.id) localStorage.removeItem(`draft_${i.id}`);
+            });
             form.reset();
             updateProgress();
         } catch (err) {
