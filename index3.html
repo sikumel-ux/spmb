@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran TA 2026 / 2027</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background: linear-gradient(180deg, #E3FDF5 0%, #FFE6FA 100%); 
+            min-height: 100vh;
+            color: #2F3640;
+            padding-bottom: 50px;
+        }
+
+        /* Top Banner - Persis seperti Screenshot */
+        .top-banner {
+            background: linear-gradient(90deg, #56ab2f 0%, #a8ff78 100%);
+            padding: 18px 10px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .banner-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 6px 20px;
+            border-radius: 50px;
+            color: #FFF;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        /* Sticky Progress Bar Area */
+        .progress-container {
+            background: #FFF;
+            padding: 15px 20px;
+            margin: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .progress-text {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #4A5568;
+            flex-shrink: 0;
+        }
+        .progress-text span {
+            color: #1CB5E8;
+            font-weight: 800;
+        }
+        .progress-bar-bg {
+            background: #E2E8F0;
+            height: 12px;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #1CB5E8 0%, #73C045 100%);
+            height: 100%;
+            width: 0%; /* Diupdate otomatis lewat JS */
+            transition: width 0.4s ease;
+        }
+
+        /* Main Form Sheet Card */
+        .form-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            margin: 0 15px 25px 15px;
+            padding: 25px 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        /* Section Category Badges */
+        .section-divider {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #FFF;
+            background: linear-gradient(90deg, #1CB5E8, #73C045);
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin: 25px 0 15px 0;
+            display: inline-block;
+        }
+        .section-divider:first-of-type { margin-top: 0; }
+
+        /* Mobile-First Input Group Layout (Anti Tenggelam) */
+        .input-group {
+            margin-bottom: 16px;
+            display: block; /* Memaksa flow block vertikal penuh */
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #4A5568;
+            margin-bottom: 6px;
+        }
+        .input-group label .req { color: #E63946; margin-left: 2px; }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1.5px solid #CBD5E1;
+            border-radius: 12px;
+            background: #FFF;
+            color: #1A202C;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: #1CB5E8;
+            background: #F8FAFC;
+            box-shadow: 0 0 0 4px rgba(28, 181, 232, 0.1);
+        }
+
+        /* Row Helper untuk Isian Pendek Berdampingan (misal RT/RW) */
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+        .input-row .input-group { flex: 1; }
+
+        /* Gender Radio Layout */
+        .radio-box {
+            display: flex;
+            gap: 20px;
+            padding: 8px 0;
+        }
+        .radio-lbl {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .radio-lbl input { width: 18px; height: 18px; accent-color: #1CB5E8; }
+
+        /* Action Footer */
+        .action-area {
+            margin-top: 30px;
+        }
+        .btn-submit-form {
+            width: 100%;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #FFF;
+            background: linear-gradient(90deg, #73C045 0%, #56ab2f 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(115,192,69,0.3);
+            transition: transform 0.2s ease;
+        }
+        .btn-submit-form:active { transform: scale(0.98); }
+
+        /* Ambient Background Bubbles */
+        .bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #A8FF78 0%, #78FFD6 100%);
+            opacity: 0.2;
+            filter: blur(30px);
+            z-index: -1;
+        }
+        .circle-bottom { bottom: 5%; left: 5%; width: 120px; height: 120px; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-circle circle-bottom"></div>
+
+    <div class="top-banner">
+        <div class="banner-tag">✨ Pendaftaran Tahun Ajaran 2026 / 2027</div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-text">Kelengkapan Formulir: <span id="percentText">0%</span></div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form id="mainPendaftaranForm">
+            
+            <div class="section-divider">👶 DATA CALON MURID</div>
+            
+            <div class="input-group">
+                <label for="p_nama">Nama Lengkap Anak<span class="req">*</span></label>
+                <input type="text" class="track-field" id="p_nama" required placeholder="Contoh: Muhammad Akhdan">
+            </div>
+
+            <div class="input-group">
+                <label for="p_panggilan">Nama Panggilan<span class="req">*</span></label>
+                <input type="text" class="track-field" id="p_panggilan" required placeholder="Contoh: Akhdan">
+            </div>
+
+            <div class="input-group">
+                <label>Jenis Kelamin<span class="req">*</span></label>
+                <div class="radio-box">
+                    <label class="radio-lbl"><input type="radio" name="p_jk" value="Laki-laki" checked> Laki-laki</label>
+                    <label class="radio-lbl"><input type="radio" name="p_jk" value="Perempuan"> Perempuan</label>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="p_tempat_lahir">Tempat Lahir<span class="req">*</span></label>
+                    <input type="text" class="track-field" id="p_tempat_lahir" required placeholder="Kota">
+                </div>
+                <div class="input-group">
+                    <label for="p_tanggal_lahir">Tanggal Lahir<span class="req">*</span></label>
+                    <input type="date" class="track-field" id="p_tanggal_lahir" required>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="p_nik">NIK Anak<span class="req">*</span></label>
+                    <input type="text" class="track-field" id="p_nik" maxlength="16" required placeholder="16 digit NIK">
+                </div>
+                <div class="input-group">
+                    <label for="p_kk">No. Kartu Keluarga<span class="req">*</span></label>
+                    <input type="text" class="track-field" id="p_kk" maxlength="16" required placeholder="16 digit KK">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="p_alamat">Alamat Tinggal Rumah<span class="req">*</span></label>
+                <textarea class="track-field" id="p_alamat" required rows="3" placeholder="Nama dusun, jalan, RT/RW..."></textarea>
+            </div>
+
+            <div class="section-divider">👨 DATA ORANG TUA / WALI</div>
+
+            <div class="input-group">
+                <label for="a_nama">Nama Lengkap Ayah<span class="req">*</span></label>
+                <input type="text" class="track-field" id="a_nama" required placeholder="Nama lengkap bapak">
+            </div>
+
+            <div class="input-group">
+                <label for="a_hp">No. WhatsApp Aktif<span class="req">*</span></label>
+                <input type="tel" class="track-field" id="a_hp" required placeholder="08xxxxxxxxxx">
+            </div>
+
+            <div class="input-group">
+                <label for="i_nama">Nama Lengkap Ibu<span class="req">*</span></label>
+                <input type="text" class="track-field" id="i_nama" required placeholder="Nama lengkap ibu">
+            </div>
+
+            <div class="action-area">
+                <button type="submit" class="btn-submit-form">🚀 Kirim Formulir Sekarang</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
