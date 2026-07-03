@@ -1,143 +1,154 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// Konfigurasi Project Firebase milikmu, bro
-const firebaseConfig = {
-    apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
-    authDomain: "tnsmelatidkl.firebaseapp.com",
-    projectId: "tnsmelatidkl",
-    storageBucket: "tnsmelatidkl.firebasestorage.app",
-    messagingSenderId: "915178991722",
-    appId: "1:915178991722:web:b465200ab481a5939e9a13"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Fungsi Pemicu Custom Alert Modal
-function tampilkanAlert(tipe, judul, pesan) {
-    const overlay = document.getElementById("customAlert");
-    const iconBox = document.getElementById("alertIcon");
-    const titleBox = document.getElementById("alertTitle");
-    const msgBox = document.getElementById("alertMessage");
-    const btnClose = document.getElementById("alertBtnClose");
-
-    titleBox.innerText = judul;
-    msgBox.innerText = pesan;
-
-    if (tipe === "success") {
-        iconBox.innerText = "🎉";
-        btnClose.className = "btn-alert-close btn-success-theme";
-    } else {
-        iconBox.innerText = "❌";
-        btnClose.className = "btn-alert-close";
-    }
-
-    overlay.classList.add("active");
-
-    // Kembalikan promise agar bisa ditunggu aksinya saat user klik selesai
-    return new Promise((resolve) => {
-        btnClose.onclick = () => {
-            overlay.classList.remove("active");
-            resolve();
-        };
-    });
-}
+// app.js
+import { db, generateNomorPendaftaran } from "./firebase.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("mainPendaftaranForm");
-    const trackFields = document.querySelectorAll(".track-field");
-    const progressBar = document.getElementById("progressBar");
-    const percentText = document.getElementById("percentText");
+    const form = document.getElementById("spmbForm");
+    const inputs = form.querySelectorAll("input, select, textarea");
+    const progressBarFill = document.getElementById("progressBarFill");
+    const progressText = document.getElementById("progressText");
+    const toast = document.getElementById("toast");
+    const backToTop = document.getElementById("backToTop");
 
-    function updateFormProgress() {
-        let filledCount = 0;
-        trackFields.forEach(field => {
-            if (field.value.trim() !== "") {
-                filledCount++;
-            }
-        });
-        const totalFields = trackFields.length;
-        const currentPercentage = Math.round((filledCount / totalFields) * 100);
-        progressBar.style.width = currentPercentage + "%";
-        percentText.innerText = currentPercentage + "%";
+    function updateProgress() {
+        const requiredInputs = Array.from(inputs).filter(i => i.hasAttribute('required'));
+        const filledRequired = requiredInputs.filter(i => i.value.trim() !== "").length;
+        const percentage = Math.round((filledRequired / requiredInputs.length) * 100);
+        progressBarFill.style.width = `${percentage}%`;
+        progressText.innerText = `${percentage}%`;
     }
 
-    trackFields.forEach(field => {
-        field.addEventListener("input", updateFormProgress);
-        field.addEventListener("change", updateFormProgress);
+    inputs.forEach(input => {
+        input.addEventListener("input", () => {
+            updateProgress();
+            localStorage.setItem(`draft_${input.id}`, input.value);
+        });
     });
 
-    updateFormProgress();
+    function loadDraft() {
+        inputs.forEach(input => {
+            const saved = localStorage.getItem(`draft_${input.id}`);
+            if (saved) input.value = saved;
+        });
+        updateProgress();
+    }
+    loadDraft();
 
+    function showToast(msg) {
+        toast.innerText = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 4000);
+    }
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+    });
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) backToTop.classList.add("show");
+        else backToTop.classList.remove("show");
+    });
+    backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // PREVIEW SYSTEM
+    document.getElementById("btnPreview").addEventListener("click", () => {
+        const content = `
+            <strong>I. DATA ANAK:</strong><br>
+            Nama: ${document.getElementById("namaAnak").value || '-'}<br>
+            NIK: ${document.getElementById("nikAnak").value || '-'}<br>
+            TTL: ${document.getElementById("tempatLahir").value || '-'}, ${document.getElementById("tanggalLahir").value || '-'}<br>
+            Alamat: ${document.getElementById("alamat").value || '-'}<br><br>
+            <strong>II. ORANG TUA & KONTAK:</strong><br>
+            Ayah: ${document.getElementById("namaAyah").value || '-'} (${document.getElementById("hpAyah").value || '-'})<br>
+            Ibu: ${document.getElementById("namaIbu").value || '-'} (${document.getElementById("hpIbu").value || '-'})<br>
+            Kontak Darurat: ${document.getElementById("namaDarurat").value || '-'} - ${document.getElementById("hpDarurat").value || '-'}
+        `;
+        document.getElementById("previewContent").innerHTML = content;
+        document.getElementById("previewModal").style.display = "flex";
+    });
+
+    document.getElementById("closePreview").addEventListener("click", () => {
+        document.getElementById("previewModal").style.display = "none";
+    });
+
+    document.getElementById("btnPrintForm").addEventListener("click", () => window.print());
+
+    // DATABASE WRITE
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerText = "⏳ Menyimpan ke Server Cloud...";
-
-        const selectedJk = document.querySelector('input[name="p_jk"]:checked').value;
-        const namaAnak = document.getElementById("p_nama").value.trim();
-
-        const record = {
-            createdAt: serverTimestamp(),
-            status: "Proses",
-            
-            p_nama: namaAnak,
-            p_panggilan: document.getElementById("p_panggilan").value.trim(),
-            p_jk: selectedJk,
-            p_nik: document.getElementById("p_nik").value.trim(),
-            p_kk: document.getElementById("p_kk").value.trim(),
-            p_tempat_lahir: document.getElementById("p_tempat_lahir").value.trim(),
-            p_tanggal_lahir: document.getElementById("p_tanggal_lahir").value,
-            p_agama: document.getElementById("p_agama").value,
-            p_anak_ke: parseInt(document.getElementById("p_anak_ke").value) || 1,
-            p_saudara: parseInt(document.getElementById("p_saudara").value) || 1,
-            p_alamat: document.getElementById("p_alamat").value.trim(),
-            p_rt: document.getElementById("p_rt").value.trim(),
-            p_rw: document.getElementById("p_rw").value.trim(),
-            p_desa: document.getElementById("p_desa").value.trim(),
-            p_kec: document.getElementById("p_kec").value.trim(),
-            p_kota: document.getElementById("p_kota").value.trim(),
-            p_goldar: document.getElementById("p_goldar").value || "Tidak Tahu",
-            p_imunisasi: document.getElementById("p_imunisasi").value.trim() || "-",
-
-            a_nama: document.getElementById("a_nama").value.trim(),
-            a_nik: document.getElementById("a_nik").value.trim(),
-            a_hp: document.getElementById("a_hp").value.trim(),
-            a_pekerjaan: document.getElementById("a_pekerjaan").value.trim(),
-            a_penghasilan: document.getElementById("a_penghasilan").value,
-
-            i_nama: document.getElementById("i_nama").value.trim(),
-            i_nik: document.getElementById("i_nik").value.trim(),
-            i_hp: document.getElementById("i_hp").value.trim() || document.getElementById("a_hp").value.trim(),
-            i_pekerjaan: document.getElementById("i_pejaan").value.trim(),
-            i_penghasilan: document.getElementById("i_penghasilan").value
-        };
-
         try {
-            await addDoc(collection(db, "pendaftar"), record);
-            
-            // Trigger Custom Alert Sukses
-            await tampilkanAlert(
-                "success", 
-                "Pendaftaran Berhasil!", 
-                `Data calon siswa atas nama "${namaAnak}" telah aman disimpan ke database server cloud SPS Tunas Melati.`
-            );
-            
+            const regNo = await generateNomorPendaftaran();
+            const payload = {
+                nomorPendaftaran: regNo,
+                status: "Pending",
+                createdAt: serverTimestamp(),
+                anak: {
+                    namaLengkap: document.getElementById("namaAnak").value,
+                    namaPanggilan: document.getElementById("namaPanggilan").value,
+                    nik: document.getElementById("nikAnak").value,
+                    noKk: document.getElementById("noKk").value,
+                    tempatLahir: document.getElementById("tempatLahir").value,
+                    tanggalLahir: document.getElementById("tanggalLahir").value,
+                    jenisKelamin: document.getElementById("jenisKelamin").value,
+                    agama: document.getElementById("agamaAnak").value,
+                    warga: document.getElementById("wargaAnak").value,
+                    anakKe: document.getElementById("anakKe").value,
+                    jumlahSaudara: document.getElementById("jumlahSaudara").value,
+                    statusKeluarga: document.getElementById("statusKeluarga").value,
+                    alamat: document.getElementById("alamat").value,
+                    rt: document.getElementById("rt").value,
+                    rw: document.getElementById("rw").value,
+                    desa: document.getElementById("desa").value,
+                    kecamatan: document.getElementById("kecamatan").value,
+                    kabupaten: document.getElementById("kabupaten").value,
+                    provinsi: document.getElementById("provinsi").value,
+                    kodePos: document.getElementById("kodePos").value,
+                    golDarah: document.getElementById("golDarah").value,
+                    imunisasi: document.getElementById("imunisasi").value,
+                    kondisiKesehatan: document.getElementById("kondisiKesehatan").value,
+                    alergi: document.getElementById("alergi").value
+                },
+                ayah: {
+                    nama: document.getElementById("namaAyah").value,
+                    nik: document.getElementById("nikAyah").value,
+                    ttl: document.getElementById("ttlAyah").value,
+                    agama: document.getElementById("agamaAyah").value,
+                    warga: document.getElementById("wargaAyah").value,
+                    pendidikan: document.getElementById("pendidikanAyah").value,
+                    pekerjaan: document.getElementById("pekerjaanAyah").value,
+                    gaji: document.getElementById("gajiAyah").value,
+                    hp: document.getElementById("hpAyah").value,
+                    email: document.getElementById("emailAyah").value
+                },
+                ibu: {
+                    nama: document.getElementById("namaIbu").value,
+                    nik: document.getElementById("nikIbu").value,
+                    ttl: document.getElementById("ttlIbu").value,
+                    agama: document.getElementById("agamaIbu").value,
+                    warga: document.getElementById("wargaIbu").value,
+                    pendidikan: document.getElementById("pendidikanIbu").value,
+                    pekerjaan: document.getElementById("pekerjaanIbu").value,
+                    gaji: document.getElementById("gajiIbu").value,
+                    hp: document.getElementById("hpIbu").value,
+                    email: document.getElementById("emailIbu").value
+                },
+                darurat: {
+                    nama: document.getElementById("namaDarurat").value,
+                    hubungan: document.getElementById("hubunganDarurat").value,
+                    hp: document.getElementById("hpDarurat").value,
+                    alamat: document.getElementById("alamatDarurat").value
+                }
+            };
+
+            await addDoc(collection(db, "pendaftaran"), payload);
+            alert(`Pendaftaran Sukses! Simpan Nomor Anda: ${regNo}`);
+            inputs.forEach(i => localStorage.removeItem(`draft_${i.id}`));
             form.reset();
-            updateFormProgress();
-        } catch (error) {
-            console.error("Error adding document: ", error);
-            await tampilkanAlert(
-                "error", 
-                "Gagal Menyimpan", 
-                "Waduh bro, data gagal dikirim ke cloud. Pastikan internet aktif dan rule Firestore di-set Public/Test Mode."
-            );
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "🚀 Kirim Formulir Sekarang";
+            updateProgress();
+        } catch (err) {
+            console.error(err);
+            showToast("Sistem sibuk. Gagal mengirim data.");
         }
     });
 });
