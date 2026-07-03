@@ -3,140 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - SPMB SPS Tunas Melati</title>
+    <title>Panel Admin Pendaftaran - SPS Tunas Melati</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="admin-style.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background: #F8FAFC;
+            color: #1E293B;
+            padding-bottom: 60px;
+        }
+        header {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            color: #FFF;
+            padding: 25px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        .header-title p { font-size: 0.85rem; color: #94A3B8; margin-top: 4px; }
+        .badge-admin { background: #73C045; color: white; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
+
+        .container { max-width: 1100px; margin: 25px auto; padding: 0 15px; }
+
+        .stats-grid { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .stat-card { background: #FFF; padding: 20px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #E2E8F0; flex: 1; min-width: 200px; }
+        .stat-card h3 { font-size: 0.85rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 800; color: #0F172A; margin-top: 8px; }
+
+        .card-table { background: #FFF; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #E2E8F0; overflow: hidden; }
+        .table-header-tool { padding: 20px; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; background: #FAFCFF; }
+        .table-header-tool h2 { font-size: 1.05rem; font-weight: 700; color: #334155; }
+        .btn-refresh { background: #1CB5E8; color: white; border: none; padding: 8px 16px; border-radius: 10px; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th { background: #F1F5F9; color: #475569; font-weight: 700; padding: 14px 20px; border-bottom: 2px solid #E2E8F0; }
+        td { padding: 14px 20px; border-bottom: 1px solid #E2E8F0; color: #334155; font-weight: 600; }
+        tr:hover td { background: #F8FAFC; }
+        
+        .btn-pdf { background: #EF4444; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-family: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .btn-pdf:hover { background: #DC2626; }
+        .empty-state { padding: 50px 20px; text-align: center; color: #94A3B8; font-weight: 600; }
+
+        /* CUSTOM MODAL ALERT STYLE (ADMIN) */
+        .custom-alert-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .custom-alert-overlay.active { opacity: 1; pointer-events: auto; }
+        .custom-alert-box { background: #FFFFFF; width: 90%; max-width: 420px; padding: 30px 25px; border-radius: 20px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .custom-alert-overlay.active .custom-alert-box { transform: scale(1); }
+        .alert-icon { font-size: 3rem; margin-bottom: 15px; }
+        .alert-title { font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-bottom: 10px; }
+        .alert-message { font-size: 0.92rem; color: #64748B; line-height: 1.5; margin-bottom: 25px; }
+        .btn-alert-close { background: #EF4444; color: white; border: none; padding: 10px 30px; border-radius: 10px; font-family: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+
+        /* ========================================================
+           PRINT MEDIA TARGET LAYOUT (DOKUMEN RESMI PDF ANAK)
+           ======================================================== */
+        #printArea { display: none; }
+
+        @media print {
+            body { background: #FFF; color: #000; font-family: 'Times New Roman', Times, serif; padding: 0; }
+            header, .container, .stats-grid, .card-table, .custom-alert-overlay { display: none !important; }
+            #printArea { display: block !important; padding: 10px; }
+            .print-header { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 20px; }
+            .print-header h2 { font-size: 1.5rem; font-weight: bold; text-transform: uppercase; }
+            .print-header p { font-size: 0.85rem; margin-top: 4px; }
+            .print-title { text-align: center; font-size: 1.2rem; font-weight: bold; text-decoration: underline; margin-bottom: 20px; text-transform: uppercase; line-height: 1.4; }
+            .print-section-title { font-size: 1rem; font-weight: bold; background: #E2E8F0; padding: 4px 8px; margin-top: 15px; margin-bottom: 8px; border-left: 5px solid #000; }
+            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+            .print-table td { padding: 6px 8px; border: 1px solid #94A3B8; font-size: 0.9rem; vertical-align: top; }
+            .print-table td.label { width: 30%; font-weight: bold; background: #F8FAFC; }
+            .print-table td.value { width: 70%; }
+            .print-footer-sign { margin-top: 40px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+            .sign-box { text-align: center; width: 40%; font-size: 0.9rem; }
+            .sign-space { height: 65px; }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="bubble-container">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-    </div>
+    <header>
+        <div class="header-title">
+            <h1>Panel Admin Dashboard</h1>
+            <p>SPS Tunas Melati Dongkelan • Data Formulir Masuk</p>
+        </div>
+        <div class="badge-admin">Mode Admin Aktif</div>
+    </header>
 
-    <div class="admin-layout">
-        <aside class="sidebar glass-effect">
-            <div class="sidebar-brand">
-                <img src="assets/logo.png" alt="Logo" class="admin-logo" onerror="this.src='https://placehold.co/50x50/1cb5e8/ffffff?text=SPS'">
-                <div>
-                    <h2 class="brand-name">TUNAS MELATI</h2>
-                    <p class="brand-role">Administrator Panel</p>
-                </div>
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Pendaftar</h3>
+                <div class="value" id="countTotal">0</div>
             </div>
-            <nav class="sidebar-menu">
-                <a href="#" class="menu-item active">📊 Dashboard Utama</a>
-                <a href="index.html" class="menu-item">📝 Buka Form Pendaftaran</a>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="btn-theme-toggle" class="btn-theme">🌙 Mode Gelap</button>
+            <div class="stat-card">
+                <h3>Anak Laki-Laki</h3>
+                <div class="value" id="countLaki">0</div>
             </div>
-        </aside>
-
-        <main class="main-content">
-            <header class="topbar glass-effect">
-                <div class="topbar-left">
-                    <h1 class="page-title">Dashboard Pendaftaran Murid Baru</h1>
-                    <p class="page-subtitle">Tahun Ajaran 2026 / 2027</p>
-                </div>
-                <div class="topbar-right">
-                    <div class="admin-profile">
-                        <span class="avatar">👨‍💼</span>
-                        <span class="admin-name">Panitia PMB</span>
-                    </div>
-                </div>
-            </header>
-
-            <section class="stats-grid">
-                <div class="stat-card glass-effect blue-gradient">
-                    <div class="stat-icon">👶</div>
-                    <div class="stat-info">
-                        <h3 id="stat-total">0</h3>
-                        <p>Total Pendaftar</p>
-                    </div>
-                </div>
-                <div class="stat-card glass-effect green-gradient">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-info">
-                        <h3 id="stat-diterima">0</h3>
-                        <p>Diterima</p>
-                    </div>
-                </div>
-                <div class="stat-card glass-effect yellow-gradient">
-                    <div class="stat-icon">⏳</div>
-                    <div class="stat-info">
-                        <h3 id="stat-proses">0</h3>
-                        <p>Dalam Proses</p>
-                    </div>
-                </div>
-                <div class="stat-card glass-effect red-gradient">
-                    <div class="stat-icon">❌</div>
-                    <div class="stat-info">
-                        <h3 id="stat-ditolak">0</h3>
-                        <p>Ditolak</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="control-box glass-effect scroll-reveal">
-                <div class="filter-wrapper">
-                    <div class="search-input-wrapper">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="search-bar" placeholder="Cari berdasarkan Nama, NIK anak, atau Orang Tua...">
-                    </div>
-                    <div class="select-filter-wrapper">
-                        <select id="filter-status">
-                            <option value="all">Semua Status</option>
-                            <option value="Proses">⏳ Dalam Proses</option>
-                            <option value="Diterima">✅ Diterima</option>
-                            <option value="Ditolak">❌ Ditolak</option>
-                        </select>
-                        <button id="btn-export-csv" class="btn btn-secondary">📥 Ekspor CSV (Excel)</button>
-                        <button id="btn-inject-mock" class="btn btn-primary-soft">✨ Tambah Data Simulasi</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="table-card glass-effect scroll-reveal">
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Anak</th>
-                                <th>NIK / KK</th>
-                                <th>Nama Orang Tua</th>
-                                <th>No. HP / WA</th>
-                                <th>Status</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pendaftar-list">
-                            </tbody>
-                    </table>
-                </div>
-                <div id="empty-state" class="empty-state">
-                    📭 Belum ada data pendaftaran yang masuk. Silakan isi form pendaftaran terlebih dahulu atau klik tombol "Tambah Data Simulasi".
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal-window">
-            <div class="modal-header">
-                <h3>🔍 Detail Lengkap Calon Siswa</h3>
-                <button class="close-modal" id="closeModal">&times;</button>
+            <div class="stat-card">
+                <h3>Anak Perempuan</h3>
+                <div class="value" id="countPerempuan">0</div>
             </div>
-            <div class="modal-body" id="modalDetailContent">
+        </div>
+
+        <div class="card-table">
+            <div class="table-header-tool">
+                <h2>Daftar Calon Murid Baru</h2>
+                <button class="btn-refresh" id="btnRefreshAdmin">🔄 Segarkan Data</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama Calon Siswa</th>
+                            <th>Nama Ayah</th>
+                            <th>Alamat</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        </tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    Belum ada data pendaftar yang masuk di database cloud.
                 </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnCloseModal">Tutup</button>
             </div>
         </div>
     </div>
 
-    <script src="admin-app.js"></script>
+    <div id="printArea">
+        <div class="print-header">
+            <h2>SPS Tunas Melati</h2>
+            <p>Muda, Kreatif, Berkarakter • RT 04 Dongkelan, Panggungharjo, Sewon, Bantul, DI Yogyakarta</p>
+        </div>
+        <div class="print-title">Formulir Pendaftaran Murid Baru <br> Tahun Ajaran 2026 / 2027</div>
+
+        <div class="print-section-title">A. DATA CALON SISWA</div>
+        <table class="print-table">
+            <tr><td class="label">Nama Lengkap Anak</td><td class="value" id="pr_nama">-</td></tr>
+            <tr><td class="label">Nama Panggilan</td><td class="value" id="pr_panggilan">-</td></tr>
+            <tr><td class="label">Jenis Kelamin</td><td class="value" id="pr_jk">-</td></tr>
+            <tr><td class="label">NIK Anak</td><td class="value" id="pr_nik">-</td></tr>
+            <tr><td class="label">No. Kartu Keluarga</td><td class="value" id="pr_kk">-</td></tr>
+            <tr><td class="label">Tempat, Tanggal Lahir</td><td class="value" id="pr_ttl">-</td></tr>
+            <tr><td class="label">Agama</td><td class="value" id="pr_agama">-</td></tr>
+            <tr><td class="label">Anak Ke / Jumlah Saudara</td><td class="value" id="pr_anak_saudara">-</td></tr>
+            <tr><td class="label">Alamat Lengkap Rumah</td><td class="value" id="pr_alamat">-</td></tr>
+            <tr><td class="label">Golongan Darah</td><td class="value" id="pr_goldar">-</td></tr>
+            <tr><td class="label">Riwayat Imunisasi Dasar</td><td class="value" id="pr_imunisasi">-</td></tr>
+        </table>
+
+        <div class="print-section-title">B. DATA ORANG TUA KANDUNG / WALI</div>
+        <table class="print-table">
+            <tr><td class="label">Nama Lengkap Ayah</td><td class="value" id="pr_a_nama">-</td></tr>
+            <tr><td class="label">NIK Ayah</td><td class="value" id="pr_a_nik">-</td></tr>
+            <tr><td class="label">No. HP / WhatsApp Ayah</td><td class="value" id="pr_a_hp">-</td></tr>
+            <tr><td class="label">Pekerjaan / Penghasilan</td><td class="value" id="pr_a_kerja_duit">-</td></tr>
+            <tr><td class="label">Nama Lengkap Ibu</td><td class="value" id="pr_i_nama">-</td></tr>
+            <tr><td class="label">NIK Ibu</td><td class="value" id="pr_i_nik">-</td></tr>
+            <tr><td class="label">No. HP / WhatsApp Ibu</td><td class="value" id="pr_i_hp">-</td></tr>
+            <tr><td class="label">Pekerjaan / Penghasilan</td><td class="value" id="pr_i_kerja_duit">-</td></tr>
+        </table>
+
+        <div class="print-footer-sign">
+            <div class="sign-box">
+                <p>Mengetahui,</p>
+                <p>Orang Tua / Wali Murid</p>
+                <div class="sign-space"></div>
+                <p>( .................................................... )</p>
+            </div>
+            <div class="sign-box">
+                <p>Bantul, <span id="pr_current_date"></span></p>
+                <p>Panitia Pendaftaran</p>
+                <div class="sign-space"></div>
+                <p>( .................................................... )</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="customAlert" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <div id="alertIcon" class="alert-icon">❌</div>
+            <div id="alertTitle" class="alert-title">Gagal Memuat</div>
+            <div id="alertMessage" class="alert-message">Terjadi kesalahan.</div>
+            <button id="alertBtnClose" class="btn-alert-close">Tutup</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
+            authDomain: "tnsmelatidkl.firebaseapp.com",
+            projectId: "tnsmelatidkl",
+            storageBucket: "tnsmelatidkl.firebasestorage.app",
+            messagingSenderId: "915178991722",
+            appId: "1:915178991722:web:b465200ab481a5939e9a13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let cachedAdminData = [];
+
+        function tampilkanAdminAlert(judul, pesan) {
+            const overlay = document.getElementById("customAlert");
+            document.getElementById("alertTitle").innerText = judul;
+            document.getElementById("alertMessage").innerText = pesan;
+            overlay.classList.add("active");
+            document.getElementById("alertBtnClose").onclick = () => overlay.classList.remove("active");
+        }
+
+        async function loadAdminData() {
+            const tbody = document.getElementById("adminTableBody");
+            const emptyState = document.getElementById("emptyState");
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#64748B;">⏳ Sedang mengambil data dari Firebase Cloud...</td></tr>`;
+
+            try {
+                const q = query(collection(db, "pendaftar"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                tbody.innerHTML = "";
+                cachedAdminData = [];
+
+                querySnapshot.forEach((doc) => {
+                    cachedAdminData.push(doc.data());
+                });
+
+                document.getElementById("countTotal").innerText = cachedAdminData.length;
+                const lCount = cachedAdminData.filter(d => d.p_jk === "Laki-laki").length;
+                document.getElementById("countLaki").innerText = lCount;
+                document.getElementById("countPerempuan").innerText = cachedAdminData.length - lCount;
+
+                if(cachedAdminData.length === 0) {
+                    emptyState.style.display = "block";
+                    return;
+                }
+                emptyState.style.display = "none";
+
+                cachedAdminData.forEach((item, index) => {
+                    const tr = document.createElement("tr");
+                    const alamatLengkap = `${item.p_alamat}, RT ${item.p_rt}/RW ${item.p_rw}, ${item.p_desa}, ${item.p_kec}, ${item.p_kota}`;
+
+                    tr.innerHTML = `
+                        <td><strong>${item.p_nama}</strong><br><small style="color:#64748B;">Panggilan: ${item.p_panggilan} (${item.p_jk})</small></td>
+                        <td>${item.a_nama}</td>
+                        <td style="font-size:0.85rem; color:#475569; max-width: 300px;">${alamatLengkap}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-pdf" data-index="${index}">📄 Cetak PDF</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.querySelectorAll(".btn-pdf").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const idx = btn.getAttribute("data-index");
+                        generateSinglePDF(idx);
+                    });
+                });
+
+            } catch (error) {
+                console.error("Error fetching documents: ", error);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#EF4444;">❌ Gagal memuat data cloud server.</td></tr>`;
+                tampilkanAdminAlert("Koneksi Database Gagal", "Gagal mengunduh berkas dari Firebase. Mohon periksa aturan Firestore Rules proyek Anda.");
+            }
+        }
+
+        function generateSinglePDF(index) {
+            const item = cachedAdminData[index];
+            if(!item) return;
+
+            const d = new Date();
+            const bulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById("pr_current_date").innerText = `${d.getDate()} ${bulanIndo[d.getMonth()]} ${d.getFullYear()}`;
+
+            document.getElementById("pr_nama").innerText = item.p_nama;
+            document.getElementById("pr_panggilan").innerText = item.p_panggilan;
+            document.getElementById("pr_jk").innerText = item.p_jk;
+            document.getElementById("pr_nik").innerText = item.p_nik;
+            document.getElementById("pr_kk").innerText = item.p_kk;
+            document.getElementById("pr_ttl").innerText = `${item.p_tempat_lahir}, ${item.p_tanggal_lahir}`;
+            document.getElementById("pr_agama").innerText = item.p_agama;
+            document.getElementById("pr_anak_saudara").innerText = `Anak ke ${item.p_anak_ke} dari ${item.p_saudara} bersaudara`;
+            document.getElementById("pr_alamat").innerText = `${item.p_alamat}, RT ${item.p_rt} / RW ${item.p_rw}, ${item.p_desa}, ${item.p_kec}, ${item.p_kota}`;
+            document.getElementById("pr_goldar").innerText = item.p_goldar || "Tidak Tahu";
+            document.getElementById("pr_imunisasi").innerText = item.p_imunisasi || "-";
+
+            document.getElementById("pr_a_nama").innerText = item.a_nama;
+            document.getElementById("pr_a_nik").innerText = item.a_nik;
+            document.getElementById("pr_a_hp").innerText = item.a_hp;
+            document.getElementById("pr_a_kerja_duit").innerText = `${item.a_pekerjaan} / (${item.a_penghasilan})`;
+            
+            document.getElementById("pr_i_nama").innerText = item.i_nama;
+            document.getElementById("pr_i_nik").innerText = item.i_nik;
+            document.getElementById("pr_i_hp").innerText = item.i_hp || "-";
+            document.getElementById("pr_i_kerja_duit").innerText = `${item.i_pekerjaan} / (${item.i_penghasilan})`;
+
+            window.print();
+        }
+
+        document.getElementById("btnRefreshAdmin").onclick = loadAdminData;
+        window.onload = loadAdminData;
+    </script>
 </body>
 </html>
