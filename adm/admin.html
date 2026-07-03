@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin - SPS Tunas Melati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="assets/lingkaran.png" alt="Logo">
+                <div>
+                    <h4>SPMB Admin</h4>
+                    <small>SPS Tunas Melati</small>
+                </div>
+            </div>
+            <nav class="menu">
+                <a href="#" class="active">🏠 Dashboard</a>
+                <a href="#">📝 Data Murid</a>
+                <a href="#">🔍 Pencarian</a>
+                <a href="#">📊 Statistik</a>
+                <a href="#">⚙️ Pengaturan</a>
+                <button id="btnLogout" class="logout-btn">🚪 Keluar</button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Panel Kontrol Data Masuk</h2>
+                <div id="adminUserEmail" style="font-weight:600; font-size:0.9rem;">admin@tunasmelati.sch.id</div>
+            </header>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h3>Pendaftar Hari Ini</h3>
+                    <div class="value" id="statHariIni">0</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Minggu Ini</h3>
+                    <div class="value" id="statMingguIni">0</div>
+                </div>
+                <div class="metric-card" style="background: var(--bg-gradient); color: white;">
+                    <h3>Total Keseluruhan</h3>
+                    <div class="value" id="statTotal">0</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-actions">
+                    <input type="text" id="tableSearch" placeholder="Cari NIK atau Nama Anak...">
+                </div>
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>No. Pendaftaran</th>
+                            <th>Nama Anak</th>
+                            <th>NIK</th>
+                            <th>Nama Ayah</th>
+                            <th>Nama Ibu</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
