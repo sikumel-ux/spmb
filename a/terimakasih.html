@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Berhasil - SPS Tunas Melati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container thankyou-wrapper">
+        <div class="thankyou-card">
+            <h1>Berkas Diterima!</h1>
+            <p>Terima kasih telah melakukan pendaftaran di SPS Tunas Melati. Data calon peserta didik telah aman tersimpan di dalam sistem database kami.</p>
+            
+            <div style="background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 30px;">
+                <span style="font-size: 0.85rem; font-weight: 600; color: #64748b; display: block; text-transform: uppercase;">Nomor Registrasi Anda</span>
+                <span id="displayRegNo" style="font-size: 1.4rem; font-weight: 800; color: #4CAF50; letter-spacing: 1px;">-</span>
+            </div>
+
+            <a href="index.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Kembali ke Formulir</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedRegNo = sessionStorage.getItem("latestRegNo");
+            if (savedRegNo) {
+                document.getElementById("displayRegNo").innerText = savedRegNo;
+            }
+        });
+    </script>
+</body>
+</html>
