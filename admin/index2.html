@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin Pendaftaran - SPS Tunas Melati</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- PEMANGGILAN CSS BARU -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <img src="logo.png" alt="Logo" class="header-logo-admin" onerror="this.style.display='none'">
+            <div class="header-title">
+                <h1>Panel Admin Dashboard</h1>
+                <p>SPS Tunas Melati Dongkelan • Data Formulir Masuk</p>
+            </div>
+        </div>
+        <div class="badge-admin">Mode Admin</div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Pendaftar</h3>
+                <div class="value" id="countTotal">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Anak Laki-Laki</h3>
+                <div class="value" id="countLaki">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Anak Perempuan</h3>
+                <div class="value" id="countPerempuan">0</div>
+            </div>
+        </div>
+
+        <div class="card-table">
+            <div class="table-header-tool">
+                <h2>Daftar Calon Murid Baru</h2>
+                <button class="btn-refresh" id="btnRefreshAdmin">🔄 Segarkan Data</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama Calon Siswa</th>
+                            <th>Nama Ayah</th>
+                            <th>Alamat</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    Belum ada data pendaftar yang masuk di database cloud.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT VIEW AREA -->
+    <div id="printArea">
+        <div class="print-header">
+            <h2>SPS Tunas Melati</h2>
+            <p>Muda, Kreatif, Berkarakter • RT 04 Dongkelan, Panggungharjo, Sewon, Bantul, DI Yogyakarta</p>
+        </div>
+        <div class="print-title">Formulir Pendaftaran Murid Baru <br> Tahun Ajaran 2026 / 2027</div>
+
+        <div class="print-section-title">A. DATA CALON SISWA</div>
+        <table class="print-table">
+            <tr><td class="label">Nama Lengkap Anak</td><td class="value" id="pr_nama">-</td></tr>
+            <tr><td class="label">Nama Panggilan</td><td class="value" id="pr_panggilan">-</td></tr>
+            <tr><td class="label">Jenis Kelamin</td><td class="value" id="pr_jk">-</td></tr>
+            <tr><td class="label">NIK Anak</td><td class="value" id="pr_nik">-</td></tr>
+            <tr><td class="label">No. Kartu Keluarga</td><td class="value" id="pr_kk">-</td></tr>
+            <tr><td class="label">Tempat, Tanggal Lahir</td><td class="value" id="pr_ttl">-</td></tr>
+            <tr><td class="label">Agama</td><td class="value" id="pr_agama">-</td></tr>
+            <tr><td class="label">Anak Ke / Jumlah Saudara</td><td class="value" id="pr_anak_saudara">-</td></tr>
+            <tr><td class="label">Alamat Lengkap Rumah</td><td class="value" id="pr_alamat">-</td></tr>
+            <tr><td class="label">Golongan Darah</td><td class="value" id="pr_goldar">-</td></tr>
+            <tr><td class="label">Riwayat Imunisasi Dasar</td><td class="value" id="pr_imunisasi">-</td></tr>
+        </table>
+
+        <div class="print-section-title">B. DATA ORANG TUA KANDUNG / WALI</div>
+        <table class="print-table">
+            <tr><td class="label">Nama Lengkap Ayah</td><td class="value" id="pr_a_nama">-</td></tr>
+            <tr><td class="label">NIK Ayah</td><td class="value" id="pr_a_nik">-</td></tr>
+            <tr><td class="label">No. HP / WhatsApp Ayah</td><td class="value" id="pr_a_hp">-</td></tr>
+            <tr><td class="label">Pekerjaan / Penghasilan</td><td class="value" id="pr_a_kerja_duit">-</td></tr>
+            <tr><td class="label">Nama Lengkap Ibu</td><td class="value" id="pr_i_nama">-</td></tr>
+            <tr><td class="label">NIK Ibu</td><td class="value" id="pr_i_nik">-</td></tr>
+            <tr><td class="label">No. HP / WhatsApp Ibu</td><td class="value" id="pr_i_hp">-</td></tr>
+            <tr><td class="label">Pekerjaan / Penghasilan</td><td class="value" id="pr_i_kerja_duit">-</td></tr>
+        </table>
+
+        <div class="print-footer-sign">
+            <div class="sign-box">
+                <p>Mengetahui,</p>
+                <p>Orang Tua / Wali Murid</p>
+                <div class="sign-space"></div>
+                <p>( .................................................... )</p>
+            </div>
+            <div class="sign-box">
+                <p>Bantul, <span id="pr_current_date"></span></p>
+                <p>Panitia Pendaftaran</p>
+                <div class="sign-space"></div>
+                <p>( .................................................... )</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="customAlert" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <div id="alertIcon" class="alert-icon">❌</div>
+            <div id="alertTitle" class="alert-title">Gagal Memuat</div>
+            <div id="alertMessage" class="alert-message">Terjadi kesalahan.</div>
+            <button id="alertBtnClose" class="btn-alert-close">Tutup</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
+            authDomain: "tnsmelatidkl.firebaseapp.com",
+            projectId: "tnsmelatidkl",
+            storageBucket: "tnsmelatidkl.firebasestorage.app",
+            messagingSenderId: "915178991722",
+            appId: "1:915178991722:web:b465200ab481a5939e9a13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let cachedAdminData = [];
+
+        function tampilkanAdminAlert(judul, pesan) {
+            const overlay = document.getElementById("customAlert");
+            document.getElementById("alertTitle").innerText = judul;
+            document.getElementById("alertMessage").innerText = pesan;
+            overlay.classList.add("active");
+            document.getElementById("alertBtnClose").onclick = () => overlay.classList.remove("active");
+        }
+
+        async function loadAdminData() {
+            const tbody = document.getElementById("adminTableBody");
+            const emptyState = document.getElementById("emptyState");
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#64748B;">⏳ Sedang mengambil data dari Firebase Cloud...</td></tr>`;
+
+            try {
+                const q = query(collection(db, "pendaftar"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                tbody.innerHTML = "";
+                cachedAdminData = [];
+
+                querySnapshot.forEach((doc) => {
+                    cachedAdminData.push(doc.data());
+                });
+
+                document.getElementById("countTotal").innerText = cachedAdminData.length;
+                const lCount = cachedAdminData.filter(d => d.p_jk === "Laki-laki").length;
+                document.getElementById("countLaki").innerText = lCount;
+                document.getElementById("countPerempuan").innerText = cachedAdminData.length - lCount;
+
+                if(cachedAdminData.length === 0) {
+                    emptyState.style.display = "block";
+                    return;
+                }
+                emptyState.style.display = "none";
+
+                cachedAdminData.forEach((item, index) => {
+                    const tr = document.createElement("tr");
+                    const alamatLengkap = `${item.p_alamat}, RT ${item.p_rt}/RW ${item.p_rw}, ${item.p_desa}, ${item.p_kec}, ${item.p_kota}`;
+
+                    tr.innerHTML = `
+                        <td><strong>${item.p_nama}</strong><br><small style="color:#64748B;">Panggilan: ${item.p_panggilan} (${item.p_jk})</small></td>
+                        <td>${item.a_nama}</td>
+                        <td style="font-size:0.85rem; color:#475569; max-width: 300px;">${alamatLengkap}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-pdf" data-index="${index}">📄 Cetak PDF</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.querySelectorAll(".btn-pdf").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const idx = btn.getAttribute("data-index");
+                        generateSinglePDF(idx);
+                    });
+                });
+
+            } catch (error) {
+                console.error("Error fetching documents: ", error);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#EF4444;">❌ Gagal memuat data cloud server.</td></tr>`;
+                tampilkanAdminAlert("Koneksi Database Gagal", "Gagal mengunduh berkas dari Firebase.");
+            }
+        }
+
+        function generateSinglePDF(index) {
+            const item = cachedAdminData[index];
+            if(!item) return;
+
+            const d = new Date();
+            const bulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById("pr_current_date").innerText = `${d.getDate()} ${bulanIndo[d.getMonth()]} ${d.getFullYear()}`;
+
+            document.getElementById("pr_nama").innerText = item.p_nama;
+            document.getElementById("pr_panggilan").innerText = item.p_panggilan;
+            document.getElementById("pr_jk").innerText = item.p_jk;
+            document.getElementById("pr_nik").innerText = item.p_nik;
+            document.getElementById("pr_kk").innerText = item.p_kk;
+            document.getElementById("pr_ttl").innerText = `${item.p_tempat_lahir}, ${item.p_tanggal_lahir}`;
+            document.getElementById("pr_agama").innerText = item.p_agama;
+            document.getElementById("pr_anak_saudara").innerText = `Anak ke ${item.p_anak_ke} dari ${item.p_saudara} bersaudara`;
+            document.getElementById("pr_alamat").innerText = `${item.p_alamat}, RT ${item.p_rt} / RW ${item.p_rw}, ${item.p_desa}, ${item.p_kec}, ${item.p_kota}`;
+            document.getElementById("pr_goldar").innerText = item.p_goldar || "Tidak Tahu";
+            document.getElementById("pr_imunisasi").innerText = item.p_imunisasi || "-";
+
+            document.getElementById("pr_a_nama").innerText = item.a_nama;
+            document.getElementById("pr_a_nik").innerText = item.a_nik;
+            document.getElementById("pr_a_hp").innerText = item.a_hp;
+            document.getElementById("pr_a_kerja_duit").innerText = `${item.a_pekerjaan} / (${item.a_penghasilan})`;
+            
+            document.getElementById("pr_i_nama").innerText = item.i_nama;
+            document.getElementById("pr_i_nik").innerText = item.i_nik;
+            document.getElementById("pr_i_hp").innerText = item.i_hp || "-";
+            document.getElementById("pr_i_kerja_duit").innerText = `${item.i_pekerjaan} / (${item.i_penghasilan})`;
+
+            window.print();
+        }
+
+        document.getElementById("btnRefreshAdmin").onclick = loadAdminData;
+        window.onload = loadAdminData;
+    </script>
+</body>
+</html>
