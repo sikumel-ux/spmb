@@ -21,16 +21,16 @@ body {
     transition: var(--transition); 
 }
 
-/* --- HERO BANNER HEADER (CLEAN & AUTO-RESPONSIVE) --- */
+/* --- HERO BANNER HEADER (PROPORSIONAL 1536 x 1024) --- */
 .hero-header { 
     width: 100%;
     min-height: auto; 
-    aspect-ratio: 16 / 5; /* Rasio ideal untuk banner memanjang agar tidak terlalu tinggi di laptop */
+    aspect-ratio: 3 / 2; /* Setel ke rasio 3:2 agar pas dengan ukuran 1536x1024 */
     position: relative; 
     background-image: url('header.png'); 
     background-position: center center; 
     background-repeat: no-repeat;
-    background-size: cover; /* Mengisi seluruh area header secara proporsional */
+    background-size: cover; /* Mengisi seluruh area secara presisi */
     display: flex; 
     flex-direction: column; 
     align-items: center; 
@@ -186,7 +186,9 @@ input:focus, select:focus, textarea:focus {
 /* KONTROL RESPONSIF LAYOUT (HP) */
 @media (max-width: 768px) { 
     .hero-header { 
-        aspect-ratio: 16 / 7; /* Menyesuaikan tinggi proporsi banner saat dibuka di layar HP */
+        aspect-ratio: 3 / 2; 
+        background-size: contain; /* Supaya di HP banner mengecil utuh dan tidak terpotong sampingnya */
+        background-color: #f7f9fa; /* Menjaga background tetap senada jika ada ruang sisa */
     } 
     .container { margin: 20px auto 40px auto; }
     .form-grid { grid-template-columns: 1fr; } 
