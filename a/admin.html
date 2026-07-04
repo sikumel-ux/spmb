@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin SPMB - SPS Tunas Melati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-hijau: #4CAF50;
+            --primary-kuning: #F4C430;
+            --primary-merah: #e74c3c;
+            --text-color: #2F3640;
+            --bg-light: #f8fafc;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-light); color: var(--text-color); padding: 30px 20px; }
+        
+        .admin-container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px; }
+        .admin-header h1 { color: var(--primary-hijau); font-weight: 800; font-size: 1.8rem; }
+        
+        /* Table Styling */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
+        th { background: #f1f5f9; color: #475569; padding: 16px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+        td { padding: 16px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        tr:hover { background: #f8fafc; }
+        
+        /* Badges Status */
+        .badge { padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; display: inline-block; }
+        .badge.Pending { background: #fef3c7; color: #d97706; }
+        .badge.Diterima { background: #dcfce7; color: #15803d; }
+        .badge.Ditolak { background: #fee2e2; color: #b91c1c; }
+        
+        /* Action Buttons */
+        .btn-action { padding: 8px 14px; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-right: 5px; color: white; }
+        .btn-view { background: #3b82f6; }
+        .btn-approve { background: var(--primary-hijau); }
+        .btn-reject { background: var(--primary-merah); }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* MODAL POPUP DETAIL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; width: 100%; max-width: 800px; max-height: 85vh; border-radius: 16px; overflow-y: auto; padding: 30px; position: relative; animation: fadeIn 0.3s ease; }
+        .close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; font-weight: 700; color: #94a3b8; }
+        
+        .detail-section { margin-bottom: 25px; background: #f8fafc; padding: 20px; border-radius: 12px; border-left: 4px solid var(--primary-hijau); }
+        .detail-section h3 { margin-bottom: 15px; color: #334155; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 20px; font-size: 0.9rem; }
+        .detail-item span { font-weight: 600; color: #64748b; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1>Panel Admin</h1>
+                <p style="color: #64748b; font-size: 0.9rem;">Daftar Masuk Calon Peserta Didik Baru SPS Tunas Melati</p>
+            </div>
+            <button onclick="window.location.reload()" style="background: #e2e8f0; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer;">🔄 Refresh Data</button>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No. Pendaftaran</th>
+                        <th>Nama Lengkap Anak</th>
+                        <th>Tanggal Daftar</th>
+                        <th>No. HP Orang Tua</th>
+                        <th>Status Berkas</th>
+                        <th>Aksi Pengelolaan</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #64748b;">Memuat data dari sistem cloud Firebase...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="btnCloseModal">&times;</span>
+            <h2 style="margin-bottom: 25px; color: var(--primary-hijau); font-weight: 800;" id="modalTitle">Detail Berkas Pendaftaran</h2>
+            
+            <div id="modalDetailsContainer"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Konfigurasi Database Firebase Milikmu
+        const firebaseConfig = {
+          apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
+          authDomain: "tnsmelatidkl.firebaseapp.com",
+          projectId: "tnsmelatidkl",
+          storageBucket: "tnsmelatidkl.firebasestorage.app",
+          messagingSenderId: "915178991722",
+          appId: "1:915178991722:web:b465200ab481a5939e9a13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const tableBody = document.getElementById("adminTableBody");
+        const detailModal = document.getElementById("detailModal");
+        const btnCloseModal = document.getElementById("btnCloseModal");
+        const modalDetailsContainer = document.getElementById("modalDetailsContainer");
+
+        let localDataCache = {}; // Untuk menyimpan data detail sementara
+
+        // 🟢 AMBIL DATA SECARA REAL-TIME DARI FIRESTORE
+        onSnapshot(collection(db, "pendaftaran"), (snapshot) => {
+            tableBody.innerHTML = "";
+            localDataCache = {};
+
+            if(snapshot.empty) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">Belum ada data pendaftar yang masuk.</td></tr>`;
+                return;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+                localDataCache[id] = data; // Masukkan data ke cache agar bisa di-load di modal
+
+                // Format Tanggal Masuk
+                let tanggalMasuk = "-";
+                if(data.createdAt) {
+                    const dateObj = data.createdAt.toDate();
+                    tanggalMasuk = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                }
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:#475569;">${data.nomorPendaftaran || '-'}</td>
+                    <td><strong style="color:#1e293b;">${data.anak?.namaLengkap || '-'}</strong><br><small style="color:#64748b;">NIK: ${data.anak?.nik || '-'}</small></td>
+                    <td>${tanggalMasuk}</td>
+                    <td>${data.ayah?.hp || data.ibu?.hp || '-'}</td>
+                    <td><span class="badge ${data.status}">${data.status || 'Pending'}</span></td>
+                    <td>
+                        <button class="btn-action btn-view" data-id="${id}">Buka</button>
+                        <button class="btn-action btn-approve" data-id="${id}">Terima</button>
+                        <button class="btn-action btn-reject" data-id="${id}">Tolak</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Pasang event listener ke tombol-tombol dinamis di dalam tabel
+            addTableActionListeners();
+        });
+
+        // ⚡ PENANGANAN TOMBOL VIEW, TERIMA, DAN TOLAK
+        function addTableActionListeners() {
+            // Tombol Buka Detail
+            document.querySelectorAll(".btn-view").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const id = btn.getAttribute("data-id");
+                    openDetailModal(id);
+                });
+            });
+
+            // Tombol Setel Diterima
+            document.querySelectorAll(".btn-approve").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const id = btn.getAttribute("data-id");
+                    if(confirm("Apakah Anda yakin ingin MENERIMA pendaftar ini?")) {
+                        await updateDoc(doc(db, "pendaftaran", id), { status: "Diterima" });
+                    }
+                });
+            });
+
+            // Tombol Setel Ditolak
+            document.querySelectorAll(".btn-reject").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const id = btn.getAttribute("data-id");
+                    if(confirm("Apakah Anda yakin ingin MENOLAK pendaftar ini?")) {
+                        await updateDoc(doc(db, "pendaftaran", id), { status: "Ditolak" });
+                    }
+                });
+            });
+        }
+
+        // 👁️ RENDER ISI DATA LENGKAP KE DALAM POP-UP MODAL
+        function openDetailModal(id) {
+            const data = localDataCache[id];
+            if(!data) return;
+
+            modalDetailsContainer.innerHTML = `
+                <div class="detail-section">
+                    <h3>I. Identitas Anak</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item"><span>Nama Lengkap:</span> ${data.anak?.namaLengkap || '-'}</div>
+                        <div class="detail-item"><span>Nama Panggilan:</span> ${data.anak?.namaPanggilan || '-'}</div>
+                        <div class="detail-item"><span>NIK:</span> ${data.anak?.nik || '-'}</div>
+                        <div class="detail-item"><span>No. KK:</span> ${data.anak?.noKk || '-'}</div>
+                        <div class="detail-item"><span>TTL:</span> ${data.anak?.tempatLahir || '-'}, ${data.anak?.tanggalLahir || '-'}</div>
+                        <div class="detail-item"><span>Jenis Kelamin:</span> ${data.anak?.jenisKelamin || '-'}</div>
+                        <div class="detail-item"><span>Agama:</span> ${data.anak?.agama || '-'}</div>
+                        <div class="detail-item"><span>Alamat:</span> ${data.anak?.alamat || '-'} RT ${data.anak?.rt || '-'}/RW ${data.anak?.rw || '-'}, Ds. ${data.anak?.desa || '-'}, Kec. ${data.anak?.kecamatan || '-'}, ${data.anak?.kabupaten || '-'}, ${data.anak?.provinsi || '-'}</div>
+                        <div class="detail-item"><span>Anak Ke:</span> ${data.anak?.anakKe || '-'} dari ${data.anak?.jumlahSaudara || '-'} bersaudara</div>
+                        <div class="detail-item"><span>Kesehatan / Alergi:</span> ${data.anak?.kondisiKesehatan || '-'} / ${data.anak?.alergi || '-'}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section" style="border-left-color: var(--primary-kuning);">
+                    <h3>II. Identitas Ayah</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item"><span>Nama Ayah:</span> ${data.ayah?.nama || '-'}</div>
+                        <div class="detail-item"><span>NIK Ayah:</span> ${data.ayah?.nik || '-'}</div>
+                        <div class="detail-item"><span>TTL Ayah:</span> ${data.ayah?.ttl || '-'}</div>
+                        <div class="detail-item"><span>Pekerjaan:</span> ${data.ayah?.pekerjaan || '-'}</div>
+                        <div class="detail-item"><span>Penghasilan:</span> ${data.ayah?.gaji || '-'}</div>
+                        <div class="detail-item"><span>No. HP/WA:</span> ${data.ayah?.hp || '-'}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section" style="border-left-color: #3b82f6;">
+                    <h3>III. Identitas Ibu</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item"><span>Nama Ibu:</span> ${data.ibu?.nama || '-'}</div>
+                        <div class="detail-item"><span>NIK Ibu:</span> ${data.ibu?.nik || '-'}</div>
+                        <div class="detail-item"><span>TTL Ibu:</span> ${data.ibu?.ttl || '-'}</div>
+                        <div class="detail-item"><span>Pekerjaan:</span> ${data.ibu?.pekerjaan || '-'}</div>
+                        <div class="detail-item"><span>Penghasilan:</span> ${data.ibu?.gaji || '-'}</div>
+                        <div class="detail-item"><span>No. HP/WA:</span> ${data.ibu?.hp || '-'}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section" style="border-left-color: var(--primary-merah);">
+                    <h3>IV. Kontak Darurat</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item"><span>Nama Kontak:</span> ${data.darurat?.nama || '-'}</div>
+                        <div class="detail-item"><span>Hubungan:</span> ${data.darurat?.hubungan || '-'}</div>
+                        <div class="detail-item"><span>No. HP/WA:</span> ${data.darurat?.hp || '-'}</div>
+                        <div class="detail-item" style="grid-column: span 2;"><span>Alamat Darurat:</span> ${data.darurat?.alamat || '-'}</div>
+                    </div>
+                </div>
+            `;
+            detailModal.classList.add("show");
+        }
+
+        // Close Modal Handlers
+        btnCloseModal.addEventListener("click", () => detailModal.classList.remove("show"));
+        window.addEventListener("click", (e) => { if(e.target === detailModal) detailModal.classList.remove("show"); });
+    </script>
+</body>
+</html>
