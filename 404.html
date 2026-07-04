@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>404 - Halaman Tidak Ditemukan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    background:linear-gradient(135deg,#69C23E,#FFE35A);
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+
+}
+
+body::before{
+
+    content:'';
+    position:absolute;
+
+    width:350px;
+    height:350px;
+
+    background:rgba(255,255,255,.15);
+
+    border-radius:50%;
+
+    top:-120px;
+    left:-120px;
+
+}
+
+body::after{
+
+    content:'';
+    position:absolute;
+
+    width:450px;
+    height:450px;
+
+    background:rgba(255,255,255,.1);
+
+    border-radius:50%;
+
+    bottom:-180px;
+    right:-180px;
+
+}
+
+.card{
+
+    width:92%;
+    max-width:460px;
+
+    background:#fff;
+
+    border-radius:30px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.15);
+
+    animation:fade .8s ease;
+
+    position:relative;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+transform:translateY(25px);
+
+}
+
+to{
+
+opacity:1;
+transform:none;
+
+}
+
+}
+
+.logo{
+
+    width:260px;
+    max-width:100%;
+    animation:floating 3s ease-in-out infinite;
+
+}
+
+@keyframes floating{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-10px);
+
+}
+
+}
+
+h1{
+
+    margin-top:25px;
+    color:#2E7D32;
+    font-size:34px;
+
+}
+
+p{
+
+    margin-top:12px;
+    color:#666;
+    line-height:1.8;
+
+}
+
+.progress{
+
+    margin:28px auto;
+
+    width:220px;
+    height:10px;
+
+    background:#ECECEC;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+}
+
+.progress span{
+
+    display:block;
+    height:100%;
+    width:40%;
+
+    background:linear-gradient(90deg,#68C53D,#FFD83A);
+
+    animation:move 2s linear infinite;
+
+}
+
+@keyframes move{
+
+0%{
+
+transform:translateX(-100%);
+
+}
+
+100%{
+
+transform:translateX(350%);
+
+}
+
+}
+
+.button{
+
+    display:inline-block;
+
+    margin-top:10px;
+
+    padding:14px 28px;
+
+    background:linear-gradient(90deg,#68C53D,#FFD83A);
+
+    color:white;
+
+    text-decoration:none;
+
+    border-radius:50px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.button:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.footer{
+
+margin-top:25px;
+
+font-size:13px;
+
+color:#999;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<img src="404-badge.png" class="logo" alt="404">
+
+<h1>Oops!</h1>
+
+<p>
+
+Halaman yang Anda cari tidak ditemukan.<br>
+
+Kemungkinan halaman telah dipindahkan, dihapus, atau alamat yang dimasukkan kurang tepat.
+
+</p>
+
+<div class="progress">
+<span></span>
+</div>
+
+<a href="/" class="button">
+🏠 Kembali ke Beranda
+</a>
+
+<div class="footer">
+
+SPS Tunas Melati • Dongkelan - Panggungharjo
+
+</div>
+
+</div>
+
+</body>
+</html>
