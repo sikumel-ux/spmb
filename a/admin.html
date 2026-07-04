@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin SPMB - SPS Tunas Melati</title>
+    <title>Panel Admin Dashboard SPMB - SPS Tunas Melati</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,6 +20,16 @@
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 20px; }
         .admin-header h1 { color: var(--primary-hijau); font-weight: 800; font-size: 1.8rem; }
         
+        /* GRID STATISTIK CARD */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 35px; }
+        .card-stat { background: #ffffff; padding: 20px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.01); display: flex; flex-direction: column; }
+        .card-stat .title { font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .card-stat .value { font-size: 1.8rem; font-weight: 800; color: #1e293b; }
+        .card-stat.total { border-left: 5px solid #3b82f6; }
+        .card-stat.cowok { border-left: 5px solid #06b6d4; }
+        .card-stat.cewek { border-left: 5px solid #ec4899; }
+        .card-stat.today { border-left: 5px solid var(--primary-kuning); }
+
         /* Table Styling */
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
@@ -34,10 +44,12 @@
         .badge.Ditolak { background: #fee2e2; color: #b91c1c; }
         
         /* Action Buttons */
-        .btn-action { padding: 8px 14px; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-right: 5px; color: white; }
+        .btn-action { padding: 8px 12px; border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-right: 4px; color: white; }
         .btn-view { background: #3b82f6; }
+        .btn-pdf { background: #8b5cf6; }
         .btn-approve { background: var(--primary-hijau); }
-        .btn-reject { background: var(--primary-merah); }
+        .btn-reject { background: var(--primary-kuning); color: #7c2d12; }
+        .btn-delete { background: var(--primary-merah); }
         .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
 
         /* MODAL POPUP DETAIL */
@@ -52,6 +64,30 @@
         .detail-item span { font-weight: 600; color: #64748b; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* AREA PRINT CETAK PDF */
+        #printArea { display: none; }
+
+        @media print {
+            body * { display: none !important; }
+            #printArea, #printArea * { display: block !important; }
+            #printArea { width: 100%; position: absolute; left: 0; top: 0; padding: 20px; background: white; color: black; }
+            .print-header { text-align: center; border-bottom: 3px double #000; padding-bottom: 15px; margin-bottom: 30px; }
+            .print-title { font-size: 1.6rem; font-weight: 800; text-transform: uppercase; }
+            .print-section { margin-bottom: 25px; page-break-inside: avoid; }
+            .print-section h3 { border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase; }
+            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+            .print-table td { padding: 8px 5px; border: none; font-size: 1rem; vertical-align: top; }
+            .print-table td.label { width: 30%; font-weight: bold; }
+            .print-table td.titik { width: 3%; }
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 576px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -59,10 +95,29 @@
     <div class="admin-container">
         <div class="admin-header">
             <div>
-                <h1>Panel Admin</h1>
-                <p style="color: #64748b; font-size: 0.9rem;">Daftar Masuk Calon Peserta Didik Baru SPS Tunas Melati</p>
+                <h1>Dashboard Admin</h1>
+                <p style="color: #64748b; font-size: 0.9rem;">Manajemen Real-time Sistem Penerimaan Murid Baru</p>
             </div>
-            <button onclick="window.location.reload()" style="background: #e2e8f0; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer;">🔄 Refresh Data</button>
+            <button onclick="window.location.reload()" style="background: #e2e8f0; border:none; padding:10px 16px; border-radius:8px; font-weight:600; cursor:pointer;">🔄 Refresh</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card-stat total">
+                <span class="title">Total Pendaftar</span>
+                <span class="value" id="statTotal">0</span>
+            </div>
+            <div class="card-stat cowok">
+                <span class="title">Laki-Laki (L)</span>
+                <span class="value" id="statCowok">0</span>
+            </div>
+            <div class="card-stat cewek">
+                <span class="title">Perempuan (P)</span>
+                <span class="value" id="statCewek">0</span>
+            </div>
+            <div class="card-stat today">
+                <span class="title">Daftar Hari Ini</span>
+                <span class="value" id="statToday">0</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -70,16 +125,16 @@
                 <thead>
                     <tr>
                         <th>No. Pendaftaran</th>
-                        <th>Nama Lengkap Anak</th>
+                        <th>Nama Anak</th>
+                        <th>JK</th>
                         <th>Tanggal Daftar</th>
-                        <th>No. HP Orang Tua</th>
-                        <th>Status Berkas</th>
+                        <th>Status</th>
                         <th>Aksi Pengelolaan</th>
                     </tr>
                 </thead>
                 <tbody id="adminTableBody">
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #64748b;">Memuat data dari sistem cloud Firebase...</td>
+                        <td colspan="6" style="text-align: center; color: #64748b;">Menghubungkan ke server cloud Firebase...</td>
                     </tr>
                 </tbody>
             </table>
@@ -89,17 +144,17 @@
     <div id="detailModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="btnCloseModal">&times;</span>
-            <h2 style="margin-bottom: 25px; color: var(--primary-hijau); font-weight: 800;" id="modalTitle">Detail Berkas Pendaftaran</h2>
-            
+            <h2 style="margin-bottom: 25px; color: var(--primary-hijau); font-weight: 800;">Detail Lengkap Berkas</h2>
             <div id="modalDetailsContainer"></div>
         </div>
     </div>
 
+    <div id="printArea"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Database Firebase Milikmu
         const firebaseConfig = {
           apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
           authDomain: "tnsmelatidkl.firebaseapp.com",
@@ -117,82 +172,117 @@
         const btnCloseModal = document.getElementById("btnCloseModal");
         const modalDetailsContainer = document.getElementById("modalDetailsContainer");
 
-        let localDataCache = {}; // Untuk menyimpan data detail sementara
+        let localDataCache = {}; 
 
-        // 🟢 AMBIL DATA SECARA REAL-TIME DARI FIRESTORE
+        // 🟢 LISTEN DATA FIREBASE & HITUNG STATISTIK CARD
         onSnapshot(collection(db, "pendaftaran"), (snapshot) => {
             tableBody.innerHTML = "";
             localDataCache = {};
 
+            let total = 0, cowok = 0, cewek = 0, hariIni = 0;
+            const hariIniString = new Date().toDateString();
+
             if(snapshot.empty) {
                 tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">Belum ada data pendaftar yang masuk.</td></tr>`;
+                updateCards(0, 0, 0, 0);
                 return;
             }
 
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
-                localDataCache[id] = data; // Masukkan data ke cache agar bisa di-load di modal
+                localDataCache[id] = data;
 
-                // Format Tanggal Masuk
+                // Hitung Statistik
+                total++;
+                const jk = data.anak?.jenisKelamin;
+                if (jk === "Laki-laki") cowok++;
+                else if (jk === "Perempuan") cewek++;
+
+                if (data.createdAt) {
+                    const dateObj = data.createdAt.toDate();
+                    if (dateObj.toDateString() === hariIniString) hariIni++;
+                }
+
+                // Format Tanggal Display Tabel
                 let tanggalMasuk = "-";
                 if(data.createdAt) {
-                    const dateObj = data.createdAt.toDate();
-                    tanggalMasuk = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    tanggalMasuk = data.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
                 }
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="font-weight:700; color:#475569;">${data.nomorPendaftaran || '-'}</td>
                     <td><strong style="color:#1e293b;">${data.anak?.namaLengkap || '-'}</strong><br><small style="color:#64748b;">NIK: ${data.anak?.nik || '-'}</small></td>
+                    <td><span style="font-weight:600">${jk === "Laki-laki" ? "L" : "P"}</span></td>
                     <td>${tanggalMasuk}</td>
-                    <td>${data.ayah?.hp || data.ibu?.hp || '-'}</td>
                     <td><span class="badge ${data.status}">${data.status || 'Pending'}</span></td>
                     <td>
-                        <button class="btn-action btn-view" data-id="${id}">Buka</button>
-                        <button class="btn-action btn-approve" data-id="${id}">Terima</button>
-                        <button class="btn-action btn-reject" data-id="${id}">Tolak</button>
+                        <button class="btn-action btn-view" data-id="${id}" title="Lihat">Buka</button>
+                        <button class="btn-action btn-pdf" data-id="${id}" title="Simpan PDF">PDF</button>
+                        <button class="btn-action btn-approve" data-id="${id}">✓</button>
+                        <button class="btn-action btn-reject" data-id="${id}">✕</button>
+                        <button class="btn-action btn-delete" data-id="${id}">Hapus</button>
                     </td>
                 `;
                 tableBody.appendChild(tr);
             });
 
-            // Pasang event listener ke tombol-tombol dinamis di dalam tabel
+            updateCards(total, cowok, cewek, hariIni);
             addTableActionListeners();
         });
 
-        // ⚡ PENANGANAN TOMBOL VIEW, TERIMA, DAN TOLAK
+        // Update teks nilai pada Card Atas
+        function updateCards(total, cowok, cewek, today) {
+            document.getElementById("statTotal").innerText = total;
+            document.getElementById("statCowok").innerText = cowok;
+            document.getElementById("statCewek").innerText = cewek;
+            document.getElementById("statToday").innerText = today;
+        }
+
+        // ⚡ ACTION BUTTON HANDLER
         function addTableActionListeners() {
-            // Tombol Buka Detail
+            // 1. Tombol Buka Pop-up
             document.querySelectorAll(".btn-view").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const id = btn.getAttribute("data-id");
-                    openDetailModal(id);
-                });
+                btn.addEventListener("click", () => openDetailModal(btn.getAttribute("data-id")));
             });
 
-            // Tombol Setel Diterima
+            // 2. Tombol Download / Cetak PDF Resmi
+            document.querySelectorAll(".btn-pdf").forEach(btn => {
+                btn.addEventListener("click", () => generatePDF(btn.getAttribute("data-id")));
+            });
+
+            // 3. Tombol Terima Berkas
             document.querySelectorAll(".btn-approve").forEach(btn => {
                 btn.addEventListener("click", async () => {
-                    const id = btn.getAttribute("data-id");
-                    if(confirm("Apakah Anda yakin ingin MENERIMA pendaftar ini?")) {
-                        await updateDoc(doc(db, "pendaftaran", id), { status: "Diterima" });
+                    if(confirm("Terima berkas pendaftaran anak ini?")) {
+                        await updateDoc(doc(db, "pendaftaran", btn.getAttribute("data-id")), { status: "Diterima" });
                     }
                 });
             });
 
-            // Tombol Setel Ditolak
+            // 4. Tombol Tolak Berkas
             document.querySelectorAll(".btn-reject").forEach(btn => {
                 btn.addEventListener("click", async () => {
+                    if(confirm("Tolak berkas pendaftaran anak ini?")) {
+                        await updateDoc(doc(db, "pendaftaran", btn.getAttribute("data-id")), { status: "Ditolak" });
+                    }
+                });
+            });
+
+            // 5. Tombol Hapus Berkas Selamanya (Firebase)
+            document.querySelectorAll(".btn-delete").forEach(btn => {
+                btn.addEventListener("click", async () => {
                     const id = btn.getAttribute("data-id");
-                    if(confirm("Apakah Anda yakin ingin MENOLAK pendaftar ini?")) {
-                        await updateDoc(doc(db, "pendaftaran", id), { status: "Ditolak" });
+                    const nama = localDataCache[id]?.anak?.namaLengkap || "Pendaftar";
+                    if(confirm(`🚨 PERINGATAN!\nApakah Anda yakin ingin menghapus data berkas "${nama}" secara permanen dari server cloud?`)) {
+                        await deleteDoc(doc(db, "pendaftaran", id));
                     }
                 });
             });
         }
 
-        // 👁️ RENDER ISI DATA LENGKAP KE DALAM POP-UP MODAL
+        // 👁️ DETAIL POPUP CONTROL
         function openDetailModal(id) {
             const data = localDataCache[id];
             if(!data) return;
@@ -208,50 +298,88 @@
                         <div class="detail-item"><span>TTL:</span> ${data.anak?.tempatLahir || '-'}, ${data.anak?.tanggalLahir || '-'}</div>
                         <div class="detail-item"><span>Jenis Kelamin:</span> ${data.anak?.jenisKelamin || '-'}</div>
                         <div class="detail-item"><span>Agama:</span> ${data.anak?.agama || '-'}</div>
-                        <div class="detail-item"><span>Alamat:</span> ${data.anak?.alamat || '-'} RT ${data.anak?.rt || '-'}/RW ${data.anak?.rw || '-'}, Ds. ${data.anak?.desa || '-'}, Kec. ${data.anak?.kecamatan || '-'}, ${data.anak?.kabupaten || '-'}, ${data.anak?.provinsi || '-'}</div>
-                        <div class="detail-item"><span>Anak Ke:</span> ${data.anak?.anakKe || '-'} dari ${data.anak?.jumlahSaudara || '-'} bersaudara</div>
-                        <div class="detail-item"><span>Kesehatan / Alergi:</span> ${data.anak?.kondisiKesehatan || '-'} / ${data.anak?.alergi || '-'}</div>
+                        <div class="detail-item" style="grid-column: span 2;"><span>Alamat:</span> ${data.anak?.alamat || '-'} RT ${data.anak?.rt || '-'}/RW ${data.anak?.rw || '-'}, Ds. ${data.anak?.desa || '-'}, Kec. ${data.anak?.kecamatan || '-'}</div>
+                        <div class="detail-item"><span>Anak Ke / Saudara:</span> ${data.anak?.anakKe || '-'} / ${data.anak?.jumlahSaudara || '-'}</div>
+                        <div class="detail-item"><span>Kondisi Kesehatan:</span> ${data.anak?.kondisiKesehatan || '-'}</div>
                     </div>
                 </div>
-
                 <div class="detail-section" style="border-left-color: var(--primary-kuning);">
-                    <h3>II. Identitas Ayah</h3>
+                    <h3>II. Identitas Orang Tua</h3>
                     <div class="detail-grid">
                         <div class="detail-item"><span>Nama Ayah:</span> ${data.ayah?.nama || '-'}</div>
-                        <div class="detail-item"><span>NIK Ayah:</span> ${data.ayah?.nik || '-'}</div>
-                        <div class="detail-item"><span>TTL Ayah:</span> ${data.ayah?.ttl || '-'}</div>
-                        <div class="detail-item"><span>Pekerjaan:</span> ${data.ayah?.pekerjaan || '-'}</div>
-                        <div class="detail-item"><span>Penghasilan:</span> ${data.ayah?.gaji || '-'}</div>
-                        <div class="detail-item"><span>No. HP/WA:</span> ${data.ayah?.hp || '-'}</div>
-                    </div>
-                </div>
-
-                <div class="detail-section" style="border-left-color: #3b82f6;">
-                    <h3>III. Identitas Ibu</h3>
-                    <div class="detail-grid">
+                        <div class="detail-item"><span>No. HP Ayah:</span> ${data.ayah?.hp || '-'}</div>
                         <div class="detail-item"><span>Nama Ibu:</span> ${data.ibu?.nama || '-'}</div>
-                        <div class="detail-item"><span>NIK Ibu:</span> ${data.ibu?.nik || '-'}</div>
-                        <div class="detail-item"><span>TTL Ibu:</span> ${data.ibu?.ttl || '-'}</div>
-                        <div class="detail-item"><span>Pekerjaan:</span> ${data.ibu?.pekerjaan || '-'}</div>
-                        <div class="detail-item"><span>Penghasilan:</span> ${data.ibu?.gaji || '-'}</div>
-                        <div class="detail-item"><span>No. HP/WA:</span> ${data.ibu?.hp || '-'}</div>
-                    </div>
-                </div>
-
-                <div class="detail-section" style="border-left-color: var(--primary-merah);">
-                    <h3>IV. Kontak Darurat</h3>
-                    <div class="detail-grid">
-                        <div class="detail-item"><span>Nama Kontak:</span> ${data.darurat?.nama || '-'}</div>
-                        <div class="detail-item"><span>Hubungan:</span> ${data.darurat?.hubungan || '-'}</div>
-                        <div class="detail-item"><span>No. HP/WA:</span> ${data.darurat?.hp || '-'}</div>
-                        <div class="detail-item" style="grid-column: span 2;"><span>Alamat Darurat:</span> ${data.darurat?.alamat || '-'}</div>
+                        <div class="detail-item"><span>No. HP Ibu:</span> ${data.ibu?.hp || '-'}</div>
                     </div>
                 </div>
             `;
             detailModal.classList.add("show");
         }
 
-        // Close Modal Handlers
+        // 🖨️ FUNGSI GENERATE LEMBAR PRINT FORM MENJADI PDF
+        function generatePDF(id) {
+            const data = localDataCache[id];
+            if(!data) return;
+
+            const printArea = document.getElementById("printArea");
+            let tglDaftar = data.createdAt ? data.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+
+            // Masukkan struktur laporan arsip resmi ke area print tersembunyi
+            printArea.innerHTML = `
+                <div class="print-header">
+                    <div class="print-title">SPS TUNAS MELATI</div>
+                    <div style="font-size: 0.9rem; margin-top: 4px;">FORMULIR PENDAFTARAN PESERTA DIDIK BARU resmi</div>
+                    <div style="font-size: 0.85rem; font-style: italic; margin-top: 2px;">Nomor Pendaftaran: ${data.nomorPendaftaran || '-'}</div>
+                </div>
+
+                <div class="print-section">
+                    <h3>I. IDENTITAS CALON PESERTA DIDIK</h3>
+                    <table class="print-table">
+                        <tr><td class="label">Nama Lengkap</td><td class="titik">:</td><td>${data.anak?.namaLengkap || '-'}</td></tr>
+                        <tr><td class="label">Nama Panggilan</td><td class="titik">:</td><td>${data.anak?.namaPanggilan || '-'}</td></tr>
+                        <tr><td class="label">Nomor Induk Kependudukan (NIK)</td><td class="titik">:</td><td>${data.anak?.nik || '-'}</td></tr>
+                        <tr><td class="label">Nomor Kartu Keluarga (KK)</td><td class="titik">:</td><td>${data.anak?.noKk || '-'}</td></tr>
+                        <tr><td class="label">Tempat, Tanggal Lahir</td><td class="titik">:</td><td>${data.anak?.tempatLahir || '-'}, ${data.anak?.tanggalLahir || '-'}</td></tr>
+                        <tr><td class="label">Jenis Kelamin</td><td class="titik">:</td><td>${data.anak?.jenisKelamin || '-'}</td></tr>
+                        <tr><td class="label">Agama</td><td class="titik">:</td><td>${data.anak?.agama || '-'}</td></tr>
+                        <tr><td class="label">Anak Ke / Jumlah Saudara</td><td class="titik">:</td><td>${data.anak?.anakKe || '-'} dari ${data.anak?.jumlahSaudara || '-'} bersaudara</td></tr>
+                        <tr><td class="label">Alamat Tinggal Rumah</td><td class="titik">:</td><td>${data.anak?.alamat || '-'} RT ${data.anak?.rt || '-'}/RW ${data.anak?.rw || '-'}, Desa ${data.anak?.desa || '-'}, Kec. ${data.anak?.kecamatan || '-'}, ${data.anak?.kabupaten || '-'}, ${data.anak?.provinsi || '-'}</td></tr>
+                        <tr><td class="label">Golongan Darah / Imunisasi</td><td class="titik">:</td><td>${data.anak?.golDarah || '-'} / ${data.anak?.imunisasi || '-'}</td></tr>
+                        <tr><td class="label">Riwayat Penyakit / Alergi</td><td class="titik">:</td><td>${data.anak?.alergi || 'Tidak Ada'}</td></tr>
+                    </table>
+                </div>
+
+                <div class="print-section">
+                    <h3>II. IDENTITAS ORANG TUA / WALI</h3>
+                    <table class="print-table">
+                        <tr><td class="label">Nama Lengkap Ayah</td><td class="titik">:</td><td>${data.ayah?.nama || '-'} (NIK: ${data.ayah?.nik || '-'})</td></tr>
+                        <tr><td class="label">Pendidikan / Pekerjaan Ayah</td><td class="titik">:</td><td>${data.ayah?.pendidikan || '-'} / ${data.ayah?.pekerjaan || '-'}</td></tr>
+                        <tr><td class="label">Nomor HP / WhatsApp Ayah</td><td class="titik">:</td><td>${data.ayah?.hp || '-'}</td></tr>
+                        <tr style="border-top: 1px dashed #eee;"><td class="label">Nama Lengkap Ibu</td><td class="titik">:</td><td>${data.ibu?.nama || '-'} (NIK: ${data.ibu?.nik || '-'})</td></tr>
+                        <tr><td class="label">Pendidikan / Pekerjaan Ibu</td><td class="titik">:</td><td>${data.ibu?.pendidikan || '-'} / ${data.ibu?.pekerjaan || '-'}</td></tr>
+                        <tr><td class="label">Nomor HP / WhatsApp Ibu</td><td class="titik">:</td><td>${data.ibu?.hp || '-'}</td></tr>
+                    </table>
+                </div>
+
+                <div class="print-section">
+                    <h3>III. KONTAK KEADAAN DARURAT</h3>
+                    <table class="print-table">
+                        <tr><td class="label">Nama Orang Hubungan</td><td class="titik">:</td><td>${data.darurat?.nama || '-'} (${data.darurat?.hubungan || '-'})</td></tr>
+                        <tr><td class="label">Nomor Telpon / HP</td><td class="titik">:</td><td>${data.darurat?.hp || '-'}</td></tr>
+                    </table>
+                </div>
+
+                <div style="margin-top: 60px; float: right; text-align: center; width: 250px;">
+                    <div>Yogyakarta, ${tglDaftar}</div>
+                    <div style="margin-top: 70px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px;">${data.ayah?.nama || data.ibu?.nama || 'Orang Tua / Wali'}</div>
+                    <div style="font-size: 0.85rem; color: #555; margin-top: 3px;">Orang Tua / Wali Murid</div>
+                </div>
+            `;
+
+            // Pemicu sistem cetak bawaan browser (User bisa ganti ke opsi "Save as PDF")
+            window.print();
+        }
+
         btnCloseModal.addEventListener("click", () => detailModal.classList.remove("show"));
         window.addEventListener("click", (e) => { if(e.target === detailModal) detailModal.classList.remove("show"); });
     </script>
