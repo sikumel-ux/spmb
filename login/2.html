@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Sistem Dashboard - SPS Tunas Melati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./admin.css">
+</head>
+<body>
+
+    <button id="menuMobileToggle" class="mobile-menu-btn">☰</button>
+
+    <div class="admin-wrapper">
+        <aside class="sidebar" id="adminSidebar">
+            <div class="brand">
+                <img src="../logo_sps.png" alt="Logo">
+                <div>
+                    <h4>SPMB Admin</h4>
+                    <small>SPS Tunas Melati</small>
+                </div>
+            </div>
+            
+            <nav class="menu">
+                <a href="#" class="menu-item active">
+                    <span class="icon">🏠</span> Dashboard
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📝</span> Data Murid
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🔍</span> Pencarian
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📊</span> Statistik Berkas
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">⚙️</span> Pengaturan
+                </a>
+                <button id="btnLogout" class="logout-btn">
+                    <span class="icon">🚪</span> Keluar Panel
+                </button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2>Ringkasan Berkas Masuk</h2>
+                    <p style="font-size: 0.85rem; color: #718093;">Update data administrasi murid baru</p>
+                </div>
+                <div class="admin-profile">
+                    <div class="avatar">A</div>
+                    <span id="adminUserEmail">Mengecek sesi...</span>
+                </div>
+            </header>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="card-decor"></div>
+                    <h3>Hari Ini</h3>
+                    <div class="value" id="statHariIni">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="card-decor"></div>
+                    <h3>Minggu Ini</h3>
+                    <div class="value" id="statMingguIni">0</div>
+                </div>
+                <div class="metric-card focus">
+                    <h3>Total Terdata</h3>
+                    <div class="value" id="statTotal">0</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header-tools">
+                    <input type="text" id="tableSearch" placeholder="Cari pendaftar (Ketik Nama / NIK)...">
+                </div>
+                
+                <div class="table-responsive-scroll">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>No. Pendaftaran</th>
+                                <th>Nama Lengkap Anak</th>
+                                <th>NIK</th>
+                                <th>Nama Ayah</th>
+                                <th>Nama Ibu</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Opsi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #718093; padding: 20px;">Mengubungkan ke Firebase...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="detailModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Detail Penuh Calon Siswa</h3>
+                <button id="closeModal" class="close-modal-btn">&times;</button>
+            </div>
+            <div id="detailModalBody" class="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // 🔑 Konfigurasi Firebase Resmi (Project: tnsmelatidkl)
+        const firebaseConfig = {
+          apiKey: "AIzaSyA1zxBRXwKGwj7Tz3Rcy3vWTtu9aQNKY84",
+          authDomain: "tnsmelatidkl.firebaseapp.com",
+          projectId: "tnsmelatidkl",
+          storageBucket: "tnsmelatidkl.firebasestorage.app",
+          messagingSenderId: "915178991722",
+          appId: "1:915178991722:web:b465200ab481a5939e9a13"
+        };
+
+        // Inisialisasi Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Variabel Global Data
+        let allData = []; 
+        let currentFilterStatus = "all"; 
+        let unsubscribeFirestore = null;
+
+        // DOM Elements Cache
+        let tableBody, tableSearch, detailModal, detailModalBody, closeModal;
+        let menuMobileToggle, adminSidebar, menuItems, mainTitle;
+
+        // 🛡️ GERBANG PROTEKSI UTAMA (Mengontrol Alur Sesi & Firestore Rules)
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                if (unsubscribeFirestore) unsubscribeFirestore();
+                window.location.href = "../login/";
+            } else {
+                const adminUserEmail = document.getElementById("adminUserEmail");
+                if (adminUserEmail) adminUserEmail.innerText = user.email;
+
+                // Jalankan sync database setelah login terverifikasi aman oleh server
+                initFirestoreSync();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Inisialisasi Element DOM
+            tableBody = document.getElementById("studentTableBody");
+            tableSearch = document.getElementById("tableSearch");
+            detailModal = document.getElementById("detailModal");
+            detailModalBody = document.getElementById("detailModalBody");
+            closeModal = document.getElementById("closeModal");
+            menuMobileToggle = document.getElementById("menuMobileToggle");
+            adminSidebar = document.getElementById("adminSidebar");
+            menuItems = document.querySelectorAll(".menu-item");
+            mainTitle = document.querySelector(".top-bar h2");
+
+            // --- 📱 CONTROLLER SIDEBAR MOBILE ---
+            if (menuMobileToggle && adminSidebar) {
+                menuMobileToggle.addEventListener("click", () => {
+                    adminSidebar.classList.toggle("open");
+                });
+            }
+
+            // --- 🗺️ SISTEM INTERFACES NAVIGASI SIDEBAR (SPA ENGINE) ---
+            menuItems.forEach(item => {
+                item.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    menuItems.forEach(i => i.classList.remove("active"));
+                    item.classList.add("active");
+
+                    const menuText = item.textContent.trim().replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD00-\uDFFF]/g, '').trim();
+                    mainTitle.innerText = `Menu: ${menuText}`;
+
+                    if (menuText === "Dashboard" || menuText === "Data Murid") {
+                        currentFilterStatus = "all";
+                        if (tableSearch) tableSearch.style.display = "block";
+                    } else if (menuText === "Pencarian") {
+                        currentFilterStatus = "all";
+                        if (tableSearch) {
+                            tableSearch.style.display = "block";
+                            tableSearch.focus();
+                        }
+                    } else if (menuText === "Statistik Berkas") {
+                        currentFilterStatus = "Statistik";
+                        if (tableSearch) tableSearch.style.display = "none";
+                    } else if (menuText === "Pengaturan") {
+                        currentFilterStatus = "Pengaturan";
+                        if (tableSearch) tableSearch.style.display = "none";
+                    }
+
+                    if (adminSidebar) adminSidebar.classList.remove("open");
+                    renderTable();
+                });
+            });
+
+            // --- 🚪 LOGOUT SYSTEM ---
+            const btnLogout = document.getElementById("btnLogout");
+            if (btnLogout) {
+                btnLogout.addEventListener("click", async () => {
+                    if (confirm("Apakah Anda yakin ingin keluar dari Panel Sistem Administrasi ini?")) {
+                        if (unsubscribeFirestore) unsubscribeFirestore();
+                        await signOut(auth);
+                        window.location.href = "../login/";
+                    }
+                });
+            }
+
+            if (tableSearch) {
+                tableSearch.addEventListener("input", renderTable);
+            }
+
+            // Modal Close Trigger Handlers
+            if (closeModal) {
+                closeModal.addEventListener("click", () => detailModal.style.display = "none");
+            }
+            window.addEventListener("click", (e) => {
+                if (e.target === detailModal) detailModal.style.display = "none";
+            });
+        });
+
+        // --- 🟢 REAL-TIME SYNC DATA FIRESTORE ---
+        function initFirestoreSync() {
+            if (unsubscribeFirestore) unsubscribeFirestore();
+
+            unsubscribeFirestore = onSnapshot(collection(db, "pendaftaran"), (snapshot) => {
+                allData = [];
+                let total = 0, hariIni = 0, mingguIni = 0;
+                const targetHariIni = new Date().toDateString();
+                const targetMingguIni = new Date();
+                targetMingguIni.setDate(targetMingguIni.getDate() - 7);
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    allData.push({ id: docSnap.id, ...data });
+
+                    total++;
+                    if (data.createdAt) {
+                        const dateObj = data.createdAt.toDate();
+                        if (dateObj.toDateString() === targetHariIni) hariIni++;
+                        if (dateObj >= targetMingguIni) mingguIni++;
+                    }
+                });
+
+                const elTotal = document.getElementById("statTotal");
+                const elHariIni = document.getElementById("statHariIni");
+                const elMingguIni = document.getElementById("statMingguIni");
+
+                if (elTotal) elTotal.innerText = total;
+                if (elHariIni) elHariIni.innerText = hariIni;
+                if (elMingguIni) elMingguIni.innerText = mingguIni;
+
+                renderTable();
+            }, (error) => {
+                console.error("Firestore Snapshot Error Terblokir Rules: ", error);
+            });
+        }
+
+        // --- 🔍 ENGINE RENDERING TABEL UTAMA ---
+        function renderTable() {
+            if (!tableBody) return;
+            tableBody.innerHTML = "";
+
+            if (currentFilterStatus === "Statistik") {
+                renderStatistikView();
+                return;
+            }
+            if (currentFilterStatus === "Pengaturan") {
+                renderPengaturanView();
+                return;
+            }
+
+            const keyword = tableSearch ? tableSearch.value.toLowerCase().trim() : "";
+            let indexNumber = 1;
+
+            allData.forEach((data) => {
+                const namaAnak = (data.anak?.namaLengkap || "").toLowerCase();
+                const nikAnak = (data.anak?.nik || "").toLowerCase();
+                const nomorReg = (data.nomorPendaftaran || "").toLowerCase();
+
+                if (keyword !== "" && !namaAnak.includes(keyword) && !nikAnak.includes(keyword) && !nomorReg.includes(keyword)) {
+                    return;
+                }
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${indexNumber++}</td>
+                    <td style="font-weight:700; color:#2f3542;">${data.nomorPendaftaran || '-'}</td>
+                    <td><strong style="color:#2f3640;">${data.anak?.namaLengkap || '-'}</strong></td>
+                    <td>${data.anak?.nik || '-'}</td>
+                    <td>${data.ayah?.nama || '-'}</td>
+                    <td>${data.ibu?.nama || '-'}</td>
+                    <td><span class="status-badge ${data.status || 'Pending'}">${data.status || 'Pending'}</span></td>
+                    <td style="text-align: center;">
+                        <div class="action-btn-group">
+                            <button class="action-btn btn-view" data-id="${data.id}" title="Buka Berkas">👁️</button>
+                            <button class="action-btn btn-approve" data-id="${data.id}" title="Terima Berkas">✔️</button>
+                            <button class="action-btn btn-reject" data-id="${data.id}" title="Tolak Berkas">✖️</button>
+                            <button class="action-btn btn-delete" data-id="${data.id}" title="Hapus Permanen">🗑️</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            if (tableBody.innerHTML === "") {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #718093; padding:20px;">Tidak ditemukan berkas murid pendaftar.</td></tr>`;
+            }
+
+            bindTableButtons();
+        }
+
+        // --- ⚡ CONTROLLER AKSI INTERAKSI TOMBOL ---
+        function bindTableButtons() {
+            document.querySelectorAll(".btn-view").forEach(btn => {
+                btn.addEventListener("click", () => openModalDetail(btn.getAttribute("data-id")));
+            });
+
+            document.querySelectorAll(".btn-approve").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    if (confirm("Terima Berkas ini dan ubah status menjadi 'Diterima'?")) {
+                        await updateDoc(doc(db, "pendaftaran", btn.getAttribute("data-id")), { status: "Diterima" });
+                    }
+                });
+            });
+
+            document.querySelectorAll(".btn-reject").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    if (confirm("Tolak Berkas ini dan ubah status menjadi 'Ditolak'?")) {
+                        await updateDoc(doc(db, "pendaftaran", btn.getAttribute("data-id")), { status: "Ditolak" });
+                    }
+                });
+            });
+
+            document.querySelectorAll(".btn-delete").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const id = btn.getAttribute("data-id");
+                    const nama = allData.find(item => item.id === id)?.anak?.namaLengkap || "Pendaftar";
+                    if (confirm(`🚨 PERINGATAN CRITICAL!\nApakah Anda yakin ingin menghapus data berkas "${nama}" secara permanen dari server cloud?`)) {
+                        await deleteDoc(doc(db, "pendaftaran", id));
+                    }
+                });
+            });
+        }
+
+        function openModalDetail(id) {
+            const data = allData.find(item => item.id === id);
+            if (!data || !detailModalBody) return;
+
+            detailModalBody.innerHTML = `
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                    <button id="btnPrintPDF" class="action-btn" style="background:#8b5cf6; color:white; padding:8px 16px; border-radius:8px; font-weight:600;">🖨️ Cetak / Unduh PDF Resmi</button>
+                </div>
+                <div class="modal-section-box">
+                    <h4>I. Biodata Calon Siswa</h4>
+                    <div class="info-grid">
+                        <div><span>Nama Lengkap:</span> ${data.anak?.namaLengkap || '-'}</div>
+                        <div><span>Nama Panggilan:</span> ${data.anak?.namaPanggilan || '-'}</div>
+                        <div><span>NIK:</span> ${data.anak?.nik || '-'}</div>
+                        <div><span>No. Kartu Keluarga:</span> ${data.anak?.noKk || '-'}</div>
+                        <div><span>Tempat, Tgl Lahir:</span> ${data.anak?.tempatLahir || '-'}, ${data.anak?.tanggalLahir || '-'}</div>
+                        <div><span>Jenis Kelamin:</span> ${data.anak?.jenisKelamin || '-'}</div>
+                        <div><span>Agama:</span> ${data.anak?.agama || '-'}</div>
+                        <div><span>Anak Ke / Sdr:</span> ${data.anak?.anakKe || '-'} dari ${data.anak?.jumlahSaudara || '-'} bersaudara</div>
+                        <div style="grid-column: span 2;"><span>Alamat Rumah:</span> ${data.anak?.alamat || '-'} RT ${data.anak?.rt || '-'}/RW ${data.anak?.rw || '-'}, Ds. ${data.anak?.desa || '-'}, Kec. ${data.anak?.kecamatan || '-'}</div>
+                    </div>
+                </div>
+                <div class="modal-section-box">
+                    <h4>II. Data Orang Tua / Wali</h4>
+                    <div class="info-grid">
+                        <div><span>Nama Ayah:</span> ${data.ayah?.nama || '-'}</div>
+                        <div><span>No. HP/WA Ayah:</span> ${data.ayah?.hp || '-'}</div>
+                        <div><span>Pekerjaan Ayah:</span> ${data.ayah?.pekerjaan || '-'}</div>
+                        <div><span>Nama Ibu:</span> ${data.ibu?.nama || '-'}</div>
+                        <div><span>No. HP/WA Ibu:</span> ${data.ibu?.hp || '-'}</div>
+                        <div><span>Pekerjaan Ibu:</span> ${data.ibu?.pekerjaan || '-'}</div>
+                    </div>
+                </div>
+                <div class="modal-section-box">
+                    <h4>III. Kontak Keadaan Darurat</h4>
+                    <div class="info-grid">
+                        <div><span>Nama Kontak:</span> ${data.darurat?.nama || '-'}</div>
+                        <div><span>Hubungan Keluarga:</span> ${data.darurat?.hubungan || '-'}</div>
+                        <div><span>Nomor HP/WA:</span> ${data.darurat?.hp || '-'}</div>
+                    </div>
+                </div>
+            `;
+
+            detailModal.style.display = "flex";
+            document.getElementById("btnPrintPDF").addEventListener("click", () => { window.print(); });
+        }
+
+        function renderStatistikView() {
+            let cowok = allData.filter(d => d.anak?.jenisKelamin === "Laki-laki").length;
+            let cewek = allData.filter(d => d.anak?.jenisKelamin === "Perempuan").length;
+            let diterima = allData.filter(d => d.status === "Diterima").length;
+            let pending = allData.filter(d => d.status === "Pending" || !d.status).length;
+            let ditolak = allData.filter(d => d.status === "Ditolak").length;
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="padding: 30px;">
+                        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; text-align: left;">
+                            <div style="background:#f1f5f9; padding:20px; border-radius:12px; border:1px solid #e2e8f0;">
+                                <h3 style="color:var(--primary-hijau); margin-bottom:15px; font-weight:700;">Proporsi Gender</h3>
+                                <p style="font-size:1.1rem; margin-bottom:8px;">👦 Laki-laki: <strong>${cowok} Siswa</strong></p>
+                                <p style="font-size:1.1rem;">👧 Perempuan: <strong>${cewek} Siswi</strong></p>
+                            </div>
+                            <div style="background:#f1f5f9; padding:20px; border-radius:12px; border:1px solid #e2e8f0;">
+                                <h3 style="color:#3b82f6; margin-bottom:15px; font-weight:700;">Status Peninjauan Berkas</h3>
+                                <p style="color:#15803d; font-weight:600; margin-bottom:5px;">✓ Diterima: ${diterima} Berkas</p>
+                                <p style="color:#b45309; font-weight:600; margin-bottom:5px;">⏳ Pending / Diperiksa: ${pending} Berkas</p>
+                                <p style="color:#b91c1c; font-weight:600;">✕ Ditolak: ${ditolak} Berkas</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderPengaturanView() {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="padding: 40px; text-align: left;">
+                        <div style="max-width: 500px; background: #fff; border: 1px solid #e2e8f0; padding: 25px; border-radius: 12px; box-shadow:0 4px 6px rgba(0,0,0,0.02);">
+                            <h3 style="margin-bottom: 15px; color:#2f3640; font-weight:700;">Sistem Pengaturan Panel</h3>
+                            <div style="margin-bottom: 15px;">
+                                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:5px; color:#475569;">Tahun Ajaran Aktif</label>
+                                <select style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none;"><option>2026/2027 (Aktif)</option><option>2027/2028</option></select>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:5px; color:#475569;">Status Gelombang Pendaftaran</label>
+                                <span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:700;">Gelombang 1 Buka</span>
+                            </div>
+                            <button id="btnSaveSetting" style="background:var(--primary-hijau); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer; transition:opacity 0.2s;">Simpan Perubahan</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById("btnSaveSetting").addEventListener("click", () => {
+                alert("Pengaturan tahun ajaran baru berhasil disimpan!");
+            });
+        }
+    </script>
+</body>
+</html>
